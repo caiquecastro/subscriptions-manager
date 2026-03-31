@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { getSubscriptions, type Subscription } from '../lib/firebase'
+import { getMonthlySubscriptionCost } from '../lib/subscriptions'
 
 export const Route = createFileRoute('/subscriptions')({ component: Subscriptions })
 
@@ -19,25 +20,24 @@ function Subscriptions() {
     .filter(s => activeCategory === 'All' || s.category === activeCategory)
     .sort((a, b) => {
       if (sortBy === 'renewal') return new Date(a.nextRenewal).getTime() - new Date(b.nextRenewal).getTime()
-      if (sortBy === 'price') return b.cost - a.cost
+      if (sortBy === 'price') return getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a)
       return a.name.localeCompare(b.name)
     })
 
   const totalMonthly = subscriptions
     .filter(s => s.status === 'active')
-    .reduce((sum, s) => {
-      if (s.billingCycle === 'yearly') return sum + s.cost / 12
-      if (s.billingCycle === 'quarterly') return sum + s.cost / 3
-      return sum + s.cost
-    }, 0)
+    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0)
 
   const urgentRenewals = subscriptions.filter(s => {
     const days = Math.ceil((new Date(s.nextRenewal).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     return days <= 3 && days >= 0
   })
 
-  const highestCost = [...subscriptions].sort((a, b) => b.cost - a.cost)[0]
-  const highestPercent = highestCost ? Math.round((highestCost.cost / totalMonthly) * 100) : 0
+  const highestCost = [...subscriptions]
+    .filter(s => s.status === 'active')
+    .sort((a, b) => getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a))[0]
+  const highestMonthlyCost = highestCost ? getMonthlySubscriptionCost(highestCost) : 0
+  const highestPercent = highestCost ? Math.round((highestMonthlyCost / totalMonthly) * 100) : 0
 
   return (
     <div className="rise-in space-y-6 py-4">
@@ -77,7 +77,7 @@ function Subscriptions() {
           <div>
             <p className="text-sm font-semibold text-on-tertiary-container">High-Cost Alert</p>
             <p className="text-xs text-on-surface-variant">
-              {highestCost.name} is {highestPercent}% of your monthly spend (${highestCost.cost.toFixed(2)}/mo)
+              {highestCost.name} is {highestPercent}% of your monthly spend (${highestMonthlyCost.toFixed(2)}/mo)
             </p>
           </div>
         </div>
