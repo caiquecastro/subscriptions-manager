@@ -1,9 +1,7 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { getSubscriptions, type Subscription } from "../lib/firebase";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
-import { useState } from "react";
 import { subscriptionsQueryOptions } from "../lib/query";
 
 export const Route = createFileRoute("/subscriptions")({
