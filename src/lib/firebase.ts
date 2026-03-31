@@ -13,6 +13,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
 
+function withTimeout<T>(promise: Promise<T>, ms = 10000): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timed out. Check your Firebase config and Firestore security rules.')), ms),
+    ),
+  ])
+}
+
 // Types
 export interface Subscription {
   id: string
@@ -50,15 +59,15 @@ export async function getSubscriptions(): Promise<Subscription[]> {
 }
 
 export async function addSubscription(sub: Omit<Subscription, 'id' | 'createdAt'>) {
-  return addDoc(collection(db, 'subscriptions'), { ...sub, createdAt: new Date().toISOString() })
+  return withTimeout(addDoc(collection(db, 'subscriptions'), { ...sub, createdAt: new Date().toISOString() }))
 }
 
 export async function updateSubscription(id: string, data: Partial<Subscription>) {
-  return updateDoc(doc(db, 'subscriptions', id), data)
+  return withTimeout(updateDoc(doc(db, 'subscriptions', id), data))
 }
 
 export async function deleteSubscription(id: string) {
-  return deleteDoc(doc(db, 'subscriptions', id))
+  return withTimeout(deleteDoc(doc(db, 'subscriptions', id)))
 }
 
 // Balances
@@ -73,15 +82,15 @@ export async function getBalances(): Promise<Balance[]> {
 }
 
 export async function addBalance(bal: Omit<Balance, 'id' | 'createdAt'>) {
-  return addDoc(collection(db, 'balances'), { ...bal, createdAt: new Date().toISOString() })
+  return withTimeout(addDoc(collection(db, 'balances'), { ...bal, createdAt: new Date().toISOString() }))
 }
 
 export async function updateBalance(id: string, data: Partial<Balance>) {
-  return updateDoc(doc(db, 'balances', id), data)
+  return withTimeout(updateDoc(doc(db, 'balances', id), data))
 }
 
 export async function deleteBalance(id: string) {
-  return deleteDoc(doc(db, 'balances', id))
+  return withTimeout(deleteDoc(doc(db, 'balances', id)))
 }
 
 // Sample data fallback

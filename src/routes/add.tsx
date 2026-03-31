@@ -19,6 +19,7 @@ function AddEntry() {
   const [notes, setNotes] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const filteredSuggestions = servicesSuggestions.filter(s =>
     s.toLowerCase().includes(name.toLowerCase()) && name.length > 0
@@ -27,6 +28,7 @@ function AddEntry() {
   const handleSave = async () => {
     if (!name || !cost) return
     setSaving(true)
+    setError('')
     try {
       if (entryType === 'subscription') {
         await addSubscription({
@@ -50,8 +52,9 @@ function AddEntry() {
         })
       }
       navigate({ to: entryType === 'subscription' ? '/subscriptions' : '/balances' })
-    } catch {
+    } catch (err) {
       setSaving(false)
+      setError(err instanceof Error ? err.message : 'Failed to save. Check your connection and try again.')
     }
   }
 
@@ -246,6 +249,14 @@ function AddEntry() {
           />
         </div>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="flex items-start gap-3 rounded-xl bg-error-container/30 p-4">
+          <span className="material-symbols-outlined text-[20px] text-error">error</span>
+          <p className="text-sm text-on-error-container">{error}</p>
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex justify-end gap-3">

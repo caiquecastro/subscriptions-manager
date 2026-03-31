@@ -1,8 +1,39 @@
-Welcome to your new TanStack Start app! 
+Welcome to your new TanStack Start app!
 
 # Getting Started
 
-To run this application:
+## Prerequisites
+
+### Firebase Setup
+
+This app uses Firebase Firestore for data persistence. You need to set up a Firebase project and provision a Firestore database.
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com) (or use an existing one).
+
+2. Copy `.env.example` to `.env` and fill in your Firebase config values:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Log in to Firebase CLI:
+   ```bash
+   npx firebase-tools login
+   ```
+
+4. Create the Firestore database:
+   ```bash
+   npx firebase-tools firestore:databases:create "(default)" --project <your-project-id> --location=us-east1
+   ```
+
+5. Deploy security rules (uses `firestore.rules` if present, otherwise defaults to test mode):
+   ```bash
+   npx firebase-tools deploy --only firestore:rules --project <your-project-id>
+   ```
+
+> Replace `<your-project-id>` with your Firebase project ID (found in `.env` as `VITE_FIREBASE_PROJECT_ID`).
+> You can pick a different `--location` — see [available locations](https://firebase.google.com/docs/firestore/locations).
+
+## Running the App
 
 ```bash
 npm install
