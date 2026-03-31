@@ -58,8 +58,12 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   }
 }
 
+function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
+}
+
 export async function addSubscription(sub: Omit<Subscription, 'id' | 'createdAt'>) {
-  return withTimeout(addDoc(collection(db, 'subscriptions'), { ...sub, createdAt: new Date().toISOString() }))
+  return withTimeout(addDoc(collection(db, 'subscriptions'), stripUndefined({ ...sub, createdAt: new Date().toISOString() })))
 }
 
 export async function updateSubscription(id: string, data: Partial<Subscription>) {
@@ -82,7 +86,7 @@ export async function getBalances(): Promise<Balance[]> {
 }
 
 export async function addBalance(bal: Omit<Balance, 'id' | 'createdAt'>) {
-  return withTimeout(addDoc(collection(db, 'balances'), { ...bal, createdAt: new Date().toISOString() }))
+  return withTimeout(addDoc(collection(db, 'balances'), stripUndefined({ ...bal, createdAt: new Date().toISOString() })))
 }
 
 export async function updateBalance(id: string, data: Partial<Balance>) {
