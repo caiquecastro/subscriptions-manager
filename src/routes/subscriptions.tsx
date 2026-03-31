@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getMonthlySubscriptionCost } from "../lib/subscriptions";
+import {
+  compareDateStrings,
+  getDaysUntilRenewal,
+  isRenewalWithinDays,
+} from "../lib/date";
+import {
+  getMonthlySubscriptionCost,
+} from "../lib/subscriptions";
 import { subscriptionsQueryOptions } from "../lib/query";
 
 export const Route = createFileRoute("/subscriptions")({
@@ -29,10 +36,7 @@ function Subscriptions() {
   const filtered = subscriptions
     .filter((s) => activeCategory === "All" || s.category === activeCategory)
     .sort((a, b) => {
-      if (sortBy === "renewal")
-        return (
-          new Date(a.nextRenewal).getTime() - new Date(b.nextRenewal).getTime()
-        );
+      if (sortBy === "renewal") return compareDateStrings(a.nextRenewal, b.nextRenewal);
       if (sortBy === "price")
         return getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a);
       return a.name.localeCompare(b.name);
@@ -42,12 +46,7 @@ function Subscriptions() {
     .filter((s) => s.status === "active")
     .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
 
-  const urgentRenewals = subscriptions.filter((s) => {
-    const days = Math.ceil(
-      (new Date(s.nextRenewal).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
-    );
-    return days <= 3 && days >= 0;
-  });
+  const urgentRenewals = subscriptions.filter((s) => isRenewalWithinDays(s, 3));
 
   const highestCost = [...subscriptions]
     .filter((s) => s.status === "active")
@@ -156,10 +155,7 @@ function Subscriptions() {
       {/* Subscription Grid */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {filtered.map((sub) => {
-          const daysUntil = Math.ceil(
-            (new Date(sub.nextRenewal).getTime() - Date.now()) /
-              (1000 * 60 * 60 * 24),
-          );
+          const daysUntil = getDaysUntilRenewal(sub);
           return (
             <div
               key={sub.id}
