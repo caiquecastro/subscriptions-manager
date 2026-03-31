@@ -1,28 +1,33 @@
-import { QueryClientProvider } from '@tanstack/react-query'
-import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import Sidebar from '../components/Sidebar'
-import { createQueryClient } from '../lib/query'
-import TopBar from '../components/TopBar'
-import appCss from '../styles.css?url'
+import { QueryClientProvider } from "@tanstack/react-query";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router";
+import { useState } from "react";
+import AuthScreen from "../components/AuthScreen";
+import Sidebar from "../components/Sidebar";
+import TopBar from "../components/TopBar";
+import { AuthProvider, useAuth } from "../lib/auth";
+import { createQueryClient } from "../lib/query";
+import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Vault — Subscription & Balance Manager' },
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Vault — Subscription & Balance Manager" },
     ],
-    links: [
-      { rel: 'stylesheet', href: appCss },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   component: RootLayout,
   shellComponent: RootDocument,
-})
+});
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => createQueryClient())
+  const [queryClient] = useState(() => createQueryClient());
 
   return (
     <html lang="en">
@@ -31,15 +36,34 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-body antialiased">
         <QueryClientProvider client={queryClient}>
-          {children}
+          <AuthProvider queryClient={queryClient}>{children}</AuthProvider>
           <Scripts />
         </QueryClientProvider>
       </body>
     </html>
-  )
+  );
 }
 
 function RootLayout() {
+  const { status, user } = useAuth();
+
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface">
+        <div className="flex items-center gap-3 rounded-full bg-surface-container-low px-5 py-3 text-sm font-medium text-on-surface">
+          <span className="material-symbols-outlined animate-spin text-[18px]">
+            progress_activity
+          </span>
+          Checking session...
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-surface">
       <Sidebar />
@@ -50,5 +74,5 @@ function RootLayout() {
         </main>
       </div>
     </div>
-  )
+  );
 }

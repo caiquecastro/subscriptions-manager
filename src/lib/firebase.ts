@@ -1,6 +1,4 @@
-import { initializeApp } from "firebase/app";
 import {
-  getFirestore,
   collection,
   doc,
   getDocs,
@@ -10,19 +8,8 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "",
-};
-
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+import { getCurrentUser } from "./auth";
+import { db } from "./firebase-app";
 
 function withTimeout<T>(promise: Promise<T>, ms = 10000): Promise<T> {
   return Promise.race([
@@ -66,10 +53,28 @@ export interface Balance {
   createdAt: string;
 }
 
+export function getUserCollectionPath(
+  uid: string,
+  collectionName: "subscriptions" | "balances",
+) {
+  return `users/${uid}/${collectionName}`;
+}
+
+function requireCurrentUser() {
+  const user = getCurrentUser();
+
+  if (!user) {
+    throw new Error("You must be signed in to access Vault data.");
+  }
+
+  return user;
+}
+
 // Subscriptions
 export async function getSubscriptions(): Promise<Subscription[]> {
+  const user = requireCurrentUser();
   const q = query(
-    collection(db, "subscriptions"),
+    collection(db, getUserCollectionPath(user.uid, "subscriptions")),
     orderBy("nextRenewal", "asc"),
   );
   const snapshot = await getDocs(q);
@@ -85,9 +90,10 @@ function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
 export async function addSubscription(
   sub: Omit<Subscription, "id" | "createdAt">,
 ) {
+  const user = requireCurrentUser();
   return withTimeout(
     addDoc(
-      collection(db, "subscriptions"),
+      collection(db, getUserCollectionPath(user.uid, "subscriptions")),
       stripUndefined({ ...sub, createdAt: new Date().toISOString() }),
     ),
   );
@@ -97,33 +103,50 @@ export async function updateSubscription(
   id: string,
   data: Partial<Subscription>,
 ) {
-  return withTimeout(updateDoc(doc(db, "subscriptions", id), data));
+  const user = requireCurrentUser();
+  return withTimeout(
+    updateDoc(doc(db, getUserCollectionPath(user.uid, "subscriptions"), id), data),
+  );
 }
 
 export async function deleteSubscription(id: string) {
-  return withTimeout(deleteDoc(doc(db, "subscriptions", id)));
+  const user = requireCurrentUser();
+  return withTimeout(
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "subscriptions"), id)),
+  );
 }
 
 // Balances
 export async function getBalances(): Promise<Balance[]> {
-  const q = query(collection(db, "balances"), orderBy("createdAt", "desc"));
+  const user = requireCurrentUser();
+  const q = query(
+    collection(db, getUserCollectionPath(user.uid, "balances")),
+    orderBy("createdAt", "desc"),
+  );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Balance);
 }
 
 export async function addBalance(bal: Omit<Balance, "id" | "createdAt">) {
+  const user = requireCurrentUser();
   return withTimeout(
     addDoc(
-      collection(db, "balances"),
+      collection(db, getUserCollectionPath(user.uid, "balances")),
       stripUndefined({ ...bal, createdAt: new Date().toISOString() }),
     ),
   );
 }
 
 export async function updateBalance(id: string, data: Partial<Balance>) {
-  return withTimeout(updateDoc(doc(db, "balances", id), data));
+  const user = requireCurrentUser();
+  return withTimeout(
+    updateDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id), data),
+  );
 }
 
 export async function deleteBalance(id: string) {
-  return withTimeout(deleteDoc(doc(db, "balances", id)));
+  const user = requireCurrentUser();
+  return withTimeout(
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id)),
+  );
 }
