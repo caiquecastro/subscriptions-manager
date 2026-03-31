@@ -1,224 +1,188 @@
-Welcome to your new TanStack Start app!
+# Vault
 
-# Getting Started
+Vault is a small personal dashboard for tracking recurring subscriptions and stored balances in one place. It combines subscription renewals, digital credits, and lightweight spending insights in a single React app backed by Firebase Firestore.
 
-## Prerequisites
+## What the project does
 
-### Firebase Setup
+- Tracks recurring subscriptions with category, billing cycle, renewal date, status, notes, and icon metadata
+- Tracks balances such as gift cards, store credit, ride credits, and reward points
+- Shows a dashboard with portfolio totals, monthly recurring cost, upcoming renewals, and quick insights
+- Includes dedicated views for subscriptions, balances, analytics, and adding new entries
+- Falls back to sample data when Firebase is unavailable or not configured, so the UI still renders for local development
 
-This app uses Firebase Firestore for data persistence. You need to set up a Firebase project and provision a Firestore database.
+## Tech stack
 
-1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com) (or use an existing one).
+- React 19
+- TanStack Start
+- TanStack Router with file-based routes
+- Vite
+- Tailwind CSS v4
+- Firebase Firestore
 
-2. Copy `.env.example` to `.env` and fill in your Firebase config values:
-   ```bash
-   cp .env.example .env
-   ```
+## Project structure
 
-3. Log in to Firebase CLI:
-   ```bash
-   npx firebase-tools login
-   ```
+```text
+src/
+  components/
+    Sidebar.tsx
+    TopBar.tsx
+  lib/
+    firebase.ts
+  routes/
+    __root.tsx
+    index.tsx
+    subscriptions.tsx
+    balances.tsx
+    analytics.tsx
+    add.tsx
+```
 
-4. Create the Firestore database:
-   ```bash
-   npx firebase-tools firestore:databases:create "(default)" --project <your-project-id> --location=us-east1
-   ```
+## Main screens
 
-5. Deploy security rules (uses `firestore.rules` if present, otherwise defaults to test mode):
-   ```bash
-   npx firebase-tools deploy --only firestore:rules --project <your-project-id>
-   ```
+### Dashboard
 
-> Replace `<your-project-id>` with your Firebase project ID (found in `.env` as `VITE_FIREBASE_PROJECT_ID`).
-> You can pick a different `--location` — see [available locations](https://firebase.google.com/docs/firestore/locations).
+The home screen aggregates the current tracked data and highlights:
 
-## Running the App
+- total balance across stored-value accounts
+- normalized monthly subscription spend
+- upcoming renewals
+- recent subscription entries
+- static savings insight cards
+
+### Subscriptions
+
+The subscriptions page includes:
+
+- category filters
+- sorting by renewal date, price, or name
+- urgent renewal warnings
+- a high-cost alert when one subscription dominates monthly spend
+
+### Balances
+
+The balances page includes:
+
+- total estimated balance
+- reward points summary
+- expiring credit alerts
+- a visual placeholder trend chart
+
+### Analytics
+
+The analytics page includes:
+
+- monthly and yearly spend summaries
+- category spend breakdown
+- top expenses
+- a simple monthly trend visualization
+
+### Add Entry
+
+The add page supports creating either:
+
+- a subscription
+- a balance
+
+Subscriptions and balances are persisted through Firestore via the helpers in [src/lib/firebase.ts](/Users/caique.silva/Code/Personal/subscriptions-manager/src/lib/firebase.ts).
+
+## Data model
+
+### Subscription
+
+- `name`
+- `category`
+- `cost`
+- `billingCycle`: `monthly | yearly | quarterly`
+- `nextRenewal`
+- `status`: `active | paused | cancelled`
+- `icon`
+- `notes`
+- `createdAt`
+
+### Balance
+
+- `name`
+- `type`
+- `amount`
+- `expiresAt`
+- `icon`
+- `notes`
+- `createdAt`
+
+## Running locally
+
+Install dependencies and start the dev server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-# Building For Production
+The app runs on `http://localhost:3000`.
 
-To build this application for production:
+## Firebase setup
+
+This app uses Firebase Firestore for data persistence. You need to set up a Firebase project and provision a Firestore database.
+
+1. Create a Firebase project at [Firebase Console](https://console.firebase.google.com).
+2. Create a local `.env` file in the project root with these values:
+
+```bash
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+3. Log in to Firebase CLI:
+
+```bash
+npx firebase-tools login
+```
+
+4. Create the Firestore database:
+
+```bash
+npx firebase-tools firestore:databases:create "(default)" --project <your-project-id> --location=us-east1
+```
+
+5. Deploy security rules:
+
+```bash
+npx firebase-tools deploy --only firestore:rules --project <your-project-id>
+```
+
+Replace `<your-project-id>` with the value used in `VITE_FIREBASE_PROJECT_ID`.
+
+If Firebase is not configured correctly, the app will still render using built-in sample data for read operations. Write operations from the add form will fail until Firestore is configured.
+
+## Available scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run test
+```
+
+## Build and test
+
+Create a production build:
 
 ```bash
 npm run build
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Run the test suite:
 
 ```bash
 npm run test
 ```
 
-## Styling
+## Notes
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- Firestore rules live in [firestore.rules](/Users/caique.silva/Code/Personal/subscriptions-manager/firestore.rules).
+- Firebase hosting configuration lives in [firebase.json](/Users/caique.silva/Code/Personal/subscriptions-manager/firebase.json).
+- The current UI uses generated/sample analytics in a few places, such as the balance and monthly trend visuals.
