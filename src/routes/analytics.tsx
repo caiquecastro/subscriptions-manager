@@ -1,17 +1,12 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { getSubscriptions, getBalances, type Subscription, type Balance } from '../lib/firebase'
+import { balancesQueryOptions, subscriptionsQueryOptions } from '../lib/query'
 
 export const Route = createFileRoute('/analytics')({ component: Analytics })
 
 function Analytics() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
-  const [balances, setBalances] = useState<Balance[]>([])
-
-  useEffect(() => {
-    getSubscriptions().then(setSubscriptions)
-    getBalances().then(setBalances)
-  }, [])
+  const { data: subscriptions = [] } = useQuery(subscriptionsQueryOptions)
+  const { data: balances = [] } = useQuery(balancesQueryOptions)
 
   const totalMonthly = subscriptions
     .filter(s => s.status === 'active')

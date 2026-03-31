@@ -1,6 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { addSubscription, addBalance } from '../lib/firebase'
+import { balancesQueryOptions, subscriptionsQueryOptions } from '../lib/query'
 
 export const Route = createFileRoute('/add')({ component: AddEntry })
 
@@ -8,6 +10,7 @@ const servicesSuggestions = ['Netflix', 'Spotify', 'AWS', 'Gym Membership', 'Ado
 
 function AddEntry() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [entryType, setEntryType] = useState<'subscription' | 'balance'>('subscription')
   const [name, setName] = useState('')
   const [cost, setCost] = useState('')
@@ -41,6 +44,7 @@ function AddEntry() {
           icon: 'subscriptions',
           notes,
         })
+        await queryClient.invalidateQueries({ queryKey: subscriptionsQueryOptions.queryKey })
       } else {
         await addBalance({
           name,
@@ -50,6 +54,7 @@ function AddEntry() {
           expiresAt: expiresAt || undefined,
           notes,
         })
+        await queryClient.invalidateQueries({ queryKey: balancesQueryOptions.queryKey })
       }
       navigate({ to: entryType === 'subscription' ? '/subscriptions' : '/balances' })
     } catch (err) {

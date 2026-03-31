@@ -1,5 +1,8 @@
+import { QueryClientProvider } from '@tanstack/react-query'
 import { HeadContent, Outlet, Scripts, createRootRoute } from '@tanstack/react-router'
+import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
+import { createQueryClient } from '../lib/query'
 import TopBar from '../components/TopBar'
 import appCss from '../styles.css?url'
 
@@ -19,14 +22,18 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => createQueryClient())
+
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body className="font-body antialiased">
-        {children}
-        <Scripts />
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <Scripts />
+        </QueryClientProvider>
       </body>
     </html>
   )

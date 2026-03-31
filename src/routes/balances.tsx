@@ -1,16 +1,13 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { getBalances, type Balance } from '../lib/firebase'
+import { useState } from 'react'
+import { balancesQueryOptions } from '../lib/query'
 
 export const Route = createFileRoute('/balances')({ component: Balances })
 
 function Balances() {
-  const [balances, setBalances] = useState<Balance[]>([])
   const [view, setView] = useState<'30d' | '90d'>('30d')
-
-  useEffect(() => {
-    getBalances().then(setBalances)
-  }, [])
+  const { data: balances = [] } = useQuery(balancesQueryOptions)
 
   const totalBalance = balances.reduce((sum, b) => {
     if (b.type === 'Reward Points') return sum
