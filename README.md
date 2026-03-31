@@ -8,7 +8,7 @@ Vault is a small personal dashboard for tracking recurring subscriptions and sto
 - Tracks balances such as gift cards, store credit, ride credits, and reward points
 - Shows a dashboard with portfolio totals, monthly recurring cost, upcoming renewals, and quick insights
 - Includes dedicated views for subscriptions, balances, analytics, and adding new entries
-- Falls back to sample data when Firebase is unavailable or not configured, so the UI still renders for local development
+- Reads and writes data from Firebase Firestore for subscriptions and balances
 
 ## Tech stack
 
@@ -156,7 +156,7 @@ npx firebase-tools deploy --only firestore:rules --project <your-project-id>
 
 Replace `<your-project-id>` with the value used in `VITE_FIREBASE_PROJECT_ID`.
 
-If Firebase is not configured correctly, the app will still render using built-in sample data for read operations. Write operations from the add form will fail until Firestore is configured.
+If Firebase is not configured correctly, Firestore reads and writes will fail until the project configuration and rules are set correctly.
 
 ## Available scripts
 
@@ -185,4 +185,4 @@ npm run test
 
 - Firestore rules live in [firestore.rules](/Users/caique.silva/Code/Personal/subscriptions-manager/firestore.rules).
 - Firebase hosting configuration lives in [firebase.json](/Users/caique.silva/Code/Personal/subscriptions-manager/firebase.json).
-- The current UI uses generated/sample analytics in a few places, such as the balance and monthly trend visuals.
+- The current UI uses generated placeholder visuals in a few places, such as the balance and monthly trend charts.
