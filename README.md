@@ -1,6 +1,6 @@
 # Vault
 
-Vault is a small personal dashboard for tracking recurring subscriptions and stored balances in one place. It combines subscription renewals, digital credits, and lightweight spending insights in a single React app backed by Firebase Firestore.
+Vault is a small personal dashboard for tracking recurring subscriptions and stored balances in one place. It combines subscription renewals, digital credits, and lightweight spending insights in a single React app backed by Firebase Firestore and Firebase Authentication.
 
 ## What the project does
 
@@ -18,6 +18,7 @@ Vault is a small personal dashboard for tracking recurring subscriptions and sto
 - Vite
 - Tailwind CSS v4
 - Firebase Firestore
+- Firebase Authentication
 
 ## Project structure
 
@@ -27,6 +28,7 @@ src/
     Sidebar.tsx
     TopBar.tsx
   lib/
+    auth.tsx
     firebase.ts
   routes/
     __root.tsx
@@ -134,7 +136,10 @@ VITE_FIREBASE_PROJECT_ID=
 VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
+VITE_ALLOWED_EMAIL=
 ```
+
+`VITE_ALLOWED_EMAIL` is optional. When set, only that Google account can use the app.
 
 3. Log in to Firebase CLI:
 
@@ -157,6 +162,14 @@ npx firebase-tools deploy --only firestore:rules --project <your-project-id>
 Replace `<your-project-id>` with the value used in `VITE_FIREBASE_PROJECT_ID`.
 
 If Firebase is not configured correctly, Firestore reads and writes will fail until the project configuration and rules are set correctly.
+
+## Authentication
+
+- The app uses Google sign-in through Firebase Authentication.
+- App data is stored in user-scoped Firestore collections:
+  - `users/{uid}/subscriptions`
+  - `users/{uid}/balances`
+- If you previously stored data in top-level `subscriptions` or `balances` collections, move that data into the authenticated user's `users/{uid}` namespace before relying on the new locked-down rules.
 
 ## Available scripts
 

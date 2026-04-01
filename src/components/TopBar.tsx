@@ -1,6 +1,15 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from "@tanstack/react-router";
+import { useAuth } from "../lib/auth";
 
 export default function TopBar() {
+  const { user, signOutUser } = useAuth();
+  const initials = (user?.displayName || user?.email || "VA")
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between bg-surface/80 px-4 py-3 backdrop-blur-xl lg:px-8">
       {/* Mobile logo */}
@@ -38,10 +47,36 @@ export default function TopBar() {
         <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high">
           <span className="material-symbols-outlined text-[22px] text-on-surface-variant">settings</span>
         </button>
-        <div className="ml-1 flex h-9 w-9 items-center justify-center rounded-full bg-primary-container text-sm font-bold text-on-primary">
-          CS
+        <button
+          onClick={() => void signOutUser()}
+          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high sm:hidden"
+          aria-label="Sign out"
+        >
+          <span className="material-symbols-outlined text-[20px] text-on-surface-variant">
+            logout
+          </span>
+        </button>
+        <button
+          onClick={() => void signOutUser()}
+          className="hidden items-center gap-2 rounded-full bg-surface-container-high px-3 py-2 text-xs font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest sm:inline-flex"
+        >
+          <span className="material-symbols-outlined text-[16px]">logout</span>
+          Sign Out
+        </button>
+        <div className="ml-1 flex items-center gap-2">
+          <div className="hidden text-right sm:block">
+            <p className="text-xs font-semibold text-on-surface">
+              {user?.displayName || "Vault User"}
+            </p>
+            <p className="text-[11px] text-on-surface-variant">
+              {user?.email || "Signed in"}
+            </p>
+          </div>
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-container text-sm font-bold text-on-primary">
+            {initials}
+          </div>
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,15 +1,17 @@
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link, useRouter } from "@tanstack/react-router";
+import { useAuth } from "../lib/auth";
 
 const navItems = [
   { to: '/', icon: 'dashboard', label: 'Dashboard' },
   { to: '/subscriptions', icon: 'subscriptions', label: 'Subscriptions' },
   { to: '/balances', icon: 'account_balance_wallet', label: 'Balances' },
   { to: '/analytics', icon: 'analytics', label: 'Analytics' },
-] as const
+] as const;
 
 export default function Sidebar() {
-  const router = useRouter()
-  const currentPath = router.state.location.pathname
+  const router = useRouter();
+  const { signOutUser } = useAuth();
+  const currentPath = router.state.location.pathname;
 
   return (
     <>
@@ -24,21 +26,21 @@ export default function Sidebar() {
 
         <nav className="mt-2 flex flex-1 flex-col gap-1 px-3">
           {navItems.map(item => {
-            const isActive = item.to === '/' ? currentPath === '/' : currentPath.startsWith(item.to)
+            const isActive = item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
             return (
               <Link
                 key={item.to}
                 to={item.to}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-on-surface-variant hover:bg-surface-container-high'
+                    ? "bg-primary/10 text-primary"
+                    : "text-on-surface-variant hover:bg-surface-container-high"
                 }`}
               >
                 <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                 {item.label}
               </Link>
-            )
+            );
           })}
         </nav>
 
@@ -55,7 +57,10 @@ export default function Sidebar() {
               <span className="material-symbols-outlined text-[20px]">help_outline</span>
               Help
             </button>
-            <button className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-high">
+            <button
+              onClick={() => void signOutUser()}
+              className="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm text-on-surface-variant hover:bg-surface-container-high"
+            >
               <span className="material-symbols-outlined text-[20px]">logout</span>
               Sign Out
             </button>
@@ -66,21 +71,21 @@ export default function Sidebar() {
       {/* Mobile Bottom Nav */}
       <nav className="glass-effect fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-outline-variant/20 py-2 lg:hidden">
         {navItems.map(item => {
-          const isActive = item.to === '/' ? currentPath === '/' : currentPath.startsWith(item.to)
+          const isActive = item.to === "/" ? currentPath === "/" : currentPath.startsWith(item.to);
           return (
             <Link
               key={item.to}
               to={item.to}
               className={`flex flex-col items-center gap-0.5 px-3 py-1.5 text-xs ${
-                isActive ? 'text-primary' : 'text-on-surface-variant'
+                isActive ? "text-primary" : "text-on-surface-variant"
               }`}
             >
               <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
               <span className="font-medium">{item.label}</span>
             </Link>
-          )
+          );
         })}
       </nav>
     </>
-  )
+  );
 }
