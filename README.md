@@ -171,6 +171,28 @@ If Firebase is not configured correctly, Firestore reads and writes will fail un
   - `users/{uid}/balances`
 - If you previously stored data in top-level `subscriptions` or `balances` collections, move that data into the authenticated user's `users/{uid}` namespace before relying on the new locked-down rules.
 
+### One-off data migration
+
+If you already have data in top-level `subscriptions` and `balances`, you can copy it into your authenticated user's namespace with the included script.
+
+1. Get your Firebase Auth `uid` from `Authentication > Users` in the Firebase Console.
+2. Download a service account JSON from `Project settings > Service accounts`.
+3. Run:
+
+```bash
+npm run migrate:user-data -- --uid=YOUR_UID --service-account=/absolute/path/to/service-account.json
+```
+
+Optional:
+
+- Add `--overwrite` to replace docs that already exist in `users/{uid}/...`.
+- If you already exported `GOOGLE_APPLICATION_CREDENTIALS`, you can omit `--service-account`.
+
+The script copies:
+
+- `subscriptions/*` -> `users/{uid}/subscriptions/*`
+- `balances/*` -> `users/{uid}/balances/*`
+
 ## Available scripts
 
 ```bash
