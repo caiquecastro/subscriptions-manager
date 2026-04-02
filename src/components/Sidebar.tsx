@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "../lib/auth";
+import { cn } from "../lib/cn";
 
 const navItems = [
   { to: '/', icon: 'dashboard', label: 'Dashboard' },
@@ -30,11 +31,12 @@ export default function Sidebar() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-on-surface-variant hover:bg-surface-container-high"
-                }`}
+                    : "text-on-surface-variant hover:bg-surface-container-high",
+                )}
               >
                 <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
                 {item.label}
@@ -75,9 +77,10 @@ export default function Sidebar() {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 text-xs ${
-                isActive ? "text-primary" : "text-on-surface-variant"
-              }`}
+              className={cn(
+                "flex flex-col items-center gap-0.5 px-3 py-1.5 text-xs",
+                isActive ? "text-primary" : "text-on-surface-variant",
+              )}
             >
               <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
               <span className="font-medium">{item.label}</span>
