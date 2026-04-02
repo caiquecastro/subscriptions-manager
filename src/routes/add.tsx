@@ -4,14 +4,20 @@ import { useState } from 'react'
 import { addSubscription, addBalance } from '../lib/firebase'
 import { balancesQueryOptions, subscriptionsQueryOptions } from '../lib/query'
 
-export const Route = createFileRoute('/add')({ component: AddEntry })
+export const Route = createFileRoute('/add')({
+  component: AddEntry,
+  validateSearch: (search: Record<string, unknown>): { type?: 'subscription' | 'balance' } => ({
+    type: search.type === 'balance' || search.type === 'subscription' ? search.type : undefined,
+  }),
+})
 
 const servicesSuggestions = ['Netflix', 'Spotify', 'AWS', 'Gym Membership', 'Adobe Creative Cloud', 'iCloud+', 'GitHub Pro', 'Figma', 'Notion']
 
 function AddEntry() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [entryType, setEntryType] = useState<'subscription' | 'balance'>('subscription')
+  const { type } = Route.useSearch()
+  const [entryType, setEntryType] = useState<'subscription' | 'balance'>(type ?? 'subscription')
   const [name, setName] = useState('')
   const [cost, setCost] = useState('')
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly' | 'quarterly'>('monthly')

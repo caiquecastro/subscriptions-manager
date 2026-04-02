@@ -64,6 +64,7 @@ function Balances() {
         </div>
         <Link
           to="/add"
+          search={{ type: 'balance' }}
           className="signature-gradient inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary shadow-lg transition-transform hover:scale-[1.02]"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
