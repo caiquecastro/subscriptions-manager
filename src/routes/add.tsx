@@ -229,6 +229,7 @@ function AddEntry() {
                 <option>Store Credit</option>
                 <option>Gift Card</option>
                 <option>Reward Points</option>
+                <option>API Credits</option>
                 <option>Ride Credits</option>
                 <option>Food Credits</option>
                 <option>Other</option>
