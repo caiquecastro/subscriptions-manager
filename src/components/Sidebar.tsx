@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "../lib/auth";
 
 const navItems = [
@@ -9,9 +9,8 @@ const navItems = [
 ] as const;
 
 export default function Sidebar() {
-  const router = useRouter();
+  const { pathname: currentPath } = useLocation();
   const { signOutUser } = useAuth();
-  const currentPath = router.state.location.pathname;
 
   return (
     <>
