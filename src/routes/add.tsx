@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { addSubscription, addBalance } from '../lib/firebase'
+import { BALANCE_TYPES } from '../components/BalanceCard'
 import { balancesQueryOptions, subscriptionsQueryOptions } from '../lib/query'
 
 export const Route = createFileRoute('/add')({
@@ -226,13 +227,9 @@ function AddEntry() {
                 className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
               >
                 <option value="">Select type...</option>
-                <option>Store Credit</option>
-                <option>Gift Card</option>
-                <option>Reward Points</option>
-                <option>API Credits</option>
-                <option>Ride Credits</option>
-                <option>Food Credits</option>
-                <option>Other</option>
+                {BALANCE_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
               </select>
             </div>
 

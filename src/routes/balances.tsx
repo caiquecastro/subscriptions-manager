@@ -1,60 +1,16 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { updateBalance } from "../lib/firebase";
+import { type Balance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
+import { BalanceCard, formatBalanceAmount } from "../components/BalanceCard";
+import { EditBalanceModal } from "../components/EditBalanceModal";
 
 export const Route = createFileRoute("/balances")({ component: Balances });
 
 function Balances() {
   const { data: balances = [] } = useQuery(balancesQueryOptions);
-  const queryClient = useQueryClient();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState("");
-  const [editingTypeId, setEditingTypeId] = useState<string | null>(null);
-  const [editTypeValue, setEditTypeValue] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const balanceTypes = ["Store Credit", "Gift Card", "Reward Points", "API Credits", "Ride Credits", "Food Credits", "Other"];
-
-  function startEditing(id: string, currentAmount: number) {
-    setEditingId(id);
-    setEditValue(String(currentAmount));
-  }
-
-  function startEditingType(id: string, currentType: string) {
-    setEditingTypeId(id);
-    setEditTypeValue(currentType);
-  }
-
-  async function saveAmount(id: string) {
-    const parsed = parseFloat(editValue);
-    if (isNaN(parsed) || parsed < 0) return;
-    setSaving(true);
-    try {
-      await updateBalance(id, { amount: parsed });
-      await queryClient.invalidateQueries({
-        queryKey: balancesQueryOptions.queryKey,
-      });
-    } finally {
-      setSaving(false);
-      setEditingId(null);
-    }
-  }
-
-  async function saveType(id: string) {
-    if (!editTypeValue) return;
-    setSaving(true);
-    try {
-      await updateBalance(id, { type: editTypeValue });
-      await queryClient.invalidateQueries({
-        queryKey: balancesQueryOptions.queryKey,
-      });
-    } finally {
-      setSaving(false);
-      setEditingTypeId(null);
-    }
-  }
+  const [editingBalance, setEditingBalance] = useState<Balance | null>(null);
 
   const totalBalance = balances.reduce((sum, b) => {
     if (b.type === "Reward Points") return sum;
@@ -87,7 +43,7 @@ function Balances() {
         </div>
         <Link
           to="/add"
-          search={{ type: 'balance' }}
+          search={{ type: "balance" }}
           className="signature-gradient inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary shadow-lg transition-transform hover:scale-[1.02]"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
@@ -117,140 +73,7 @@ function Balances() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {balances.map((bal) => (
-            <div
-              key={bal.id}
-              className="group rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/8">
-                  <span className="material-symbols-outlined text-[20px] text-primary">
-                    {bal.icon}
-                  </span>
-                </div>
-                <button className="flex h-8 w-8 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-surface-container-high group-hover:opacity-100">
-                  <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
-                    more_vert
-                  </span>
-                </button>
-              </div>
-              <p className="mt-3 text-sm font-medium text-on-surface">
-                {bal.name}
-              </p>
-              {editingTypeId === bal.id ? (
-                <form
-                  className="mt-1 flex items-center gap-1.5"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    saveType(bal.id);
-                  }}
-                >
-                  <select
-                    value={editTypeValue}
-                    onChange={(e) => setEditTypeValue(e.target.value)}
-                    disabled={saving}
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setEditingTypeId(null);
-                    }}
-                    className="flex-1 rounded-md bg-surface-variant px-2 py-1 text-xs text-on-surface focus:ring-2 focus:ring-primary/30 focus:outline-none"
-                  >
-                    {balanceTypes.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary hover:bg-primary/20"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">check</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingTypeId(null)}
-                    className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface-container-high"
-                  >
-                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">close</span>
-                  </button>
-                </form>
-              ) : (
-                <p
-                  className="cursor-pointer text-xs text-on-surface-variant rounded-md px-1 -mx-1 transition-colors hover:bg-surface-variant/50"
-                  onClick={() => startEditingType(bal.id, bal.type)}
-                  title="Click to edit type"
-                >
-                  {bal.type}
-                </p>
-              )}
-              {editingId === bal.id ? (
-                <form
-                  className="mt-2 flex items-center gap-1.5"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    saveAmount(bal.id);
-                  }}
-                >
-                  <div className="relative flex-1">
-                    {bal.type !== "Reward Points" && (
-                      <span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
-                        $
-                      </span>
-                    )}
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      disabled={saving}
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === "Escape") setEditingId(null);
-                      }}
-                      className={`w-full rounded-md bg-surface-variant px-2 py-1 text-sm text-on-surface focus:ring-2 focus:ring-primary/30 focus:outline-none ${bal.type !== "Reward Points" ? "pl-6" : ""}`}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary hover:bg-primary/20"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">
-                      check
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingId(null)}
-                    className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface-container-high"
-                  >
-                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
-                      close
-                    </span>
-                  </button>
-                </form>
-              ) : (
-                <p
-                  className="font-headline mt-2 cursor-pointer text-xl font-bold text-on-surface rounded-md px-1 -mx-1 transition-colors hover:bg-surface-variant/50"
-                  onClick={() => startEditing(bal.id, bal.amount)}
-                  title="Click to edit balance"
-                >
-                  {bal.type === "Reward Points"
-                    ? bal.amount.toLocaleString() + " pts"
-                    : "$" + bal.amount.toFixed(2)}
-                </p>
-              )}
-              {bal.expiresAt && (
-                <p className="mt-1.5 text-xs text-tertiary">
-                  Expires{" "}
-                  {new Date(bal.expiresAt).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </p>
-              )}
-            </div>
+            <BalanceCard key={bal.id} balance={bal} onEdit={setEditingBalance} />
           ))}
         </div>
       </section>
@@ -285,10 +108,7 @@ function Balances() {
                       {bal.name}
                     </p>
                     <p className="text-xs text-on-surface-variant">
-                      {bal.type === "Reward Points"
-                        ? bal.amount.toLocaleString() + " pts"
-                        : "$" + bal.amount.toFixed(2)}{" "}
-                      &middot; Expires in {days} days
+                      {formatBalanceAmount(bal)} &middot; Expires in {days} days
                     </p>
                   </div>
                   <span className="rounded-full bg-tertiary-container/20 px-2.5 py-1 text-xs font-medium text-tertiary">
@@ -299,6 +119,14 @@ function Balances() {
             })}
           </div>
         </section>
+      )}
+
+      {/* Edit Modal */}
+      {editingBalance && (
+        <EditBalanceModal
+          balance={editingBalance}
+          onClose={() => setEditingBalance(null)}
+        />
       )}
     </div>
   );
