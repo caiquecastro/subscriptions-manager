@@ -11,11 +11,20 @@ function Balances() {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [editingTypeId, setEditingTypeId] = useState<string | null>(null);
+  const [editTypeValue, setEditTypeValue] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const balanceTypes = ["Store Credit", "Gift Card", "Reward Points", "API Credits", "Ride Credits", "Food Credits", "Other"];
 
   function startEditing(id: string, currentAmount: number) {
     setEditingId(id);
     setEditValue(String(currentAmount));
+  }
+
+  function startEditingType(id: string, currentType: string) {
+    setEditingTypeId(id);
+    setEditTypeValue(currentType);
   }
 
   async function saveAmount(id: string) {
@@ -30,6 +39,20 @@ function Balances() {
     } finally {
       setSaving(false);
       setEditingId(null);
+    }
+  }
+
+  async function saveType(id: string) {
+    if (!editTypeValue) return;
+    setSaving(true);
+    try {
+      await updateBalance(id, { type: editTypeValue });
+      await queryClient.invalidateQueries({
+        queryKey: balancesQueryOptions.queryKey,
+      });
+    } finally {
+      setSaving(false);
+      setEditingTypeId(null);
     }
   }
 
@@ -113,7 +136,52 @@ function Balances() {
               <p className="mt-3 text-sm font-medium text-on-surface">
                 {bal.name}
               </p>
-              <p className="text-xs text-on-surface-variant">{bal.type}</p>
+              {editingTypeId === bal.id ? (
+                <form
+                  className="mt-1 flex items-center gap-1.5"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    saveType(bal.id);
+                  }}
+                >
+                  <select
+                    value={editTypeValue}
+                    onChange={(e) => setEditTypeValue(e.target.value)}
+                    disabled={saving}
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setEditingTypeId(null);
+                    }}
+                    className="flex-1 rounded-md bg-surface-variant px-2 py-1 text-xs text-on-surface focus:ring-2 focus:ring-primary/30 focus:outline-none"
+                  >
+                    {balanceTypes.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary hover:bg-primary/20"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">check</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingTypeId(null)}
+                    className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-surface-container-high"
+                  >
+                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">close</span>
+                  </button>
+                </form>
+              ) : (
+                <p
+                  className="cursor-pointer text-xs text-on-surface-variant rounded-md px-1 -mx-1 transition-colors hover:bg-surface-variant/50"
+                  onClick={() => startEditingType(bal.id, bal.type)}
+                  title="Click to edit type"
+                >
+                  {bal.type}
+                </p>
+              )}
               {editingId === bal.id ? (
                 <form
                   className="mt-2 flex items-center gap-1.5"
