@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
+import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
 export const Route = createFileRoute("/analytics")({ component: Analytics });
 
@@ -10,24 +11,14 @@ function Analytics() {
 
   const totalMonthly = subscriptions
     .filter((s) => s.status === "active")
-    .reduce((sum, s) => {
-      if (s.billingCycle === "yearly") return sum + s.cost / 12;
-      if (s.billingCycle === "quarterly") return sum + s.cost / 3;
-      return sum + s.cost;
-    }, 0);
+    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
 
   const totalYearly = totalMonthly * 12;
 
   const categoryBreakdown = subscriptions.reduce(
     (acc, s) => {
       if (s.status !== "active") return acc;
-      const monthlyCost =
-        s.billingCycle === "yearly"
-          ? s.cost / 12
-          : s.billingCycle === "quarterly"
-            ? s.cost / 3
-            : s.cost;
-      acc[s.category] = (acc[s.category] || 0) + monthlyCost;
+      acc[s.category] = (acc[s.category] || 0) + getMonthlySubscriptionCost(s);
       return acc;
     },
     {} as Record<string, number>

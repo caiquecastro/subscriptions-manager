@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
+import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
 export const Route = createFileRoute("/")({ component: Dashboard });
 
@@ -10,11 +11,7 @@ function Dashboard() {
 
   const totalMonthly = subscriptions
     .filter((s) => s.status === "active")
-    .reduce((sum, s) => {
-      if (s.billingCycle === "yearly") return sum + s.cost / 12;
-      if (s.billingCycle === "quarterly") return sum + s.cost / 3;
-      return sum + s.cost;
-    }, 0);
+    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
 
   const totalBalance = balances.reduce((sum, b) => sum + b.amount, 0);
 
