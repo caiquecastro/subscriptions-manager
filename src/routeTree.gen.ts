@@ -14,7 +14,7 @@ import { Route as BalancesRouteImport } from './routes/balances'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SubscriptionsIdRouteImport } from './routes/subscriptions.$id'
+import { Route as SubscriptionsIdRouteImport } from './routes/subscriptions_.$id'
 
 const SubscriptionsRoute = SubscriptionsRouteImport.update({
   id: '/subscriptions',
@@ -42,9 +42,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const SubscriptionsIdRoute = SubscriptionsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => SubscriptionsRoute,
+  id: '/subscriptions_/$id',
+  path: '/subscriptions/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -52,7 +52,7 @@ export interface FileRoutesByFullPath {
   '/add': typeof AddRoute
   '/analytics': typeof AnalyticsRoute
   '/balances': typeof BalancesRoute
-  '/subscriptions': typeof SubscriptionsRouteWithChildren
+  '/subscriptions': typeof SubscriptionsRoute
   '/subscriptions/$id': typeof SubscriptionsIdRoute
 }
 export interface FileRoutesByTo {
@@ -60,7 +60,7 @@ export interface FileRoutesByTo {
   '/add': typeof AddRoute
   '/analytics': typeof AnalyticsRoute
   '/balances': typeof BalancesRoute
-  '/subscriptions': typeof SubscriptionsRouteWithChildren
+  '/subscriptions': typeof SubscriptionsRoute
   '/subscriptions/$id': typeof SubscriptionsIdRoute
 }
 export interface FileRoutesById {
@@ -69,8 +69,8 @@ export interface FileRoutesById {
   '/add': typeof AddRoute
   '/analytics': typeof AnalyticsRoute
   '/balances': typeof BalancesRoute
-  '/subscriptions': typeof SubscriptionsRouteWithChildren
-  '/subscriptions/$id': typeof SubscriptionsIdRoute
+  '/subscriptions': typeof SubscriptionsRoute
+  '/subscriptions_/$id': typeof SubscriptionsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +96,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/balances'
     | '/subscriptions'
-    | '/subscriptions/$id'
+    | '/subscriptions_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -104,7 +104,8 @@ export interface RootRouteChildren {
   AddRoute: typeof AddRoute
   AnalyticsRoute: typeof AnalyticsRoute
   BalancesRoute: typeof BalancesRoute
-  SubscriptionsRoute: typeof SubscriptionsRouteWithChildren
+  SubscriptionsRoute: typeof SubscriptionsRoute
+  SubscriptionsIdRoute: typeof SubscriptionsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,34 +145,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/subscriptions/$id': {
-      id: '/subscriptions/$id'
-      path: '/$id'
+    '/subscriptions_/$id': {
+      id: '/subscriptions_/$id'
+      path: '/subscriptions/$id'
       fullPath: '/subscriptions/$id'
       preLoaderRoute: typeof SubscriptionsIdRouteImport
-      parentRoute: typeof SubscriptionsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface SubscriptionsRouteChildren {
-  SubscriptionsIdRoute: typeof SubscriptionsIdRoute
-}
-
-const SubscriptionsRouteChildren: SubscriptionsRouteChildren = {
-  SubscriptionsIdRoute: SubscriptionsIdRoute,
-}
-
-const SubscriptionsRouteWithChildren = SubscriptionsRoute._addFileChildren(
-  SubscriptionsRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
   AnalyticsRoute: AnalyticsRoute,
   BalancesRoute: BalancesRoute,
-  SubscriptionsRoute: SubscriptionsRouteWithChildren,
+  SubscriptionsRoute: SubscriptionsRoute,
+  SubscriptionsIdRoute: SubscriptionsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
