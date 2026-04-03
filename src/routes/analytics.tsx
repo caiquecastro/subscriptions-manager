@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { formatCurrency } from "../lib/currency";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
@@ -135,7 +136,7 @@ function Analytics() {
                     </p>
                   </div>
                   <p className="text-sm font-bold text-on-surface">
-                    ${sub.cost.toFixed(2)}
+                    {formatCurrency(sub.cost, sub.currency)}
                   </p>
                 </div>
               ))}

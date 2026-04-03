@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { formatCurrency } from "../lib/currency";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
@@ -9,9 +10,16 @@ function Dashboard() {
   const { data: subscriptions = [] } = useQuery(subscriptionsQueryOptions);
   const { data: balances = [] } = useQuery(balancesQueryOptions);
 
-  const totalMonthly = subscriptions
+  const monthlyByCurrency = subscriptions
     .filter((s) => s.status === "active")
-    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
+    .reduce(
+      (acc, s) => {
+        const cur = s.currency ?? "USD";
+        acc[cur] = (acc[cur] || 0) + getMonthlySubscriptionCost(s);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
   const totalBalance = balances.reduce((sum, b) => sum + b.amount, 0);
 
@@ -23,7 +31,14 @@ function Dashboard() {
     )
     .slice(0, 3);
 
-  const upcomingTotal = upcomingRenewals.reduce((sum, s) => sum + s.cost, 0);
+  const upcomingTotalByCurrency = upcomingRenewals.reduce(
+    (acc, s) => {
+      const cur = s.currency ?? "USD";
+      acc[cur] = (acc[cur] || 0) + s.cost;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const recentSubs = subscriptions.slice(0, 4);
 
@@ -59,9 +74,16 @@ function Dashboard() {
               <p className="text-xs font-medium text-on-surface-variant">
                 Monthly Cost
               </p>
-              <p className="font-headline mt-0.5 text-xl font-bold text-on-surface">
-                ${totalMonthly.toFixed(2)}
-              </p>
+              <div className="mt-0.5 space-y-0.5">
+                {Object.entries(monthlyByCurrency).map(([cur, amount]) => (
+                  <p
+                    key={cur}
+                    className="font-headline text-xl font-bold text-on-surface"
+                  >
+                    {formatCurrency(amount, cur as "BRL" | "USD" | "EUR")}
+                  </p>
+                ))}
+              </div>
             </div>
             <div className="rounded-lg bg-surface-container-low px-5 py-3">
               <p className="text-xs font-medium text-on-surface-variant">
@@ -83,8 +105,14 @@ function Dashboard() {
               Upcoming Renewals
             </h2>
             <p className="text-sm text-on-surface-variant">
-              {upcomingRenewals.length} items &middot; $
-              {upcomingTotal.toFixed(2)} total
+              {upcomingRenewals.length} items &middot;{" "}
+              {Object.entries(upcomingTotalByCurrency)
+                .map(
+                  ([cur, amount]) =>
+                    formatCurrency(amount, cur as "BRL" | "USD" | "EUR"),
+                )
+                .join(" + ")}{" "}
+              total
             </p>
           </div>
           <Link
@@ -118,7 +146,7 @@ function Dashboard() {
                 </p>
               </div>
               <p className="text-sm font-bold text-on-surface">
-                ${sub.cost.toFixed(2)}
+                {formatCurrency(sub.cost, sub.currency)}
               </p>
             </div>
           ))}
@@ -186,7 +214,7 @@ function Dashboard() {
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-semibold text-on-surface">
-                    ${sub.cost.toFixed(2)}
+                    {formatCurrency(sub.cost, sub.currency)}
                   </p>
                   <p className="text-xs text-on-surface-variant">
                     /
