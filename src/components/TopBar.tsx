@@ -15,15 +15,21 @@ export default function TopBar() {
       {/* Mobile logo */}
       <div className="flex items-center gap-2 lg:hidden">
         <div className="signature-gradient flex h-8 w-8 items-center justify-center rounded-lg">
-          <span className="material-symbols-outlined text-[18px] text-on-primary">shield</span>
+          <span className="material-symbols-outlined text-[18px] text-on-primary">
+            shield
+          </span>
         </div>
-        <span className="font-headline text-lg font-bold text-on-surface">Vault</span>
+        <span className="font-headline text-lg font-bold text-on-surface">
+          Vault
+        </span>
       </div>
 
       {/* Search */}
       <div className="hidden max-w-md flex-1 lg:block">
         <div className="flex items-center gap-2 rounded-lg bg-surface-container-high px-4 py-2.5">
-          <span className="material-symbols-outlined text-[20px] text-on-surface-variant">search</span>
+          <span className="material-symbols-outlined text-[20px] text-on-surface-variant">
+            search
+          </span>
           <input
             type="text"
             placeholder="Search subscriptions, balances..."
@@ -41,13 +47,24 @@ export default function TopBar() {
           <span className="material-symbols-outlined text-[18px]">add</span>
           Add
         </Link>
-        <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high">
-          <span className="material-symbols-outlined text-[22px] text-on-surface-variant">notifications</span>
-        </button>
-        <button className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high">
-          <span className="material-symbols-outlined text-[22px] text-on-surface-variant">settings</span>
+        <button
+          type="button"
+          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high"
+        >
+          <span className="material-symbols-outlined text-[22px] text-on-surface-variant">
+            notifications
+          </span>
         </button>
         <button
+          type="button"
+          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high"
+        >
+          <span className="material-symbols-outlined text-[22px] text-on-surface-variant">
+            settings
+          </span>
+        </button>
+        <button
+          type="button"
           onClick={() => void signOutUser()}
           className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-surface-container-high sm:hidden"
           aria-label="Sign out"
@@ -57,6 +74,7 @@ export default function TopBar() {
           </span>
         </button>
         <button
+          type="button"
           onClick={() => void signOutUser()}
           className="hidden items-center gap-2 rounded-full bg-surface-container-high px-3 py-2 text-xs font-medium text-on-surface-variant transition-colors hover:bg-surface-container-highest sm:inline-flex"
         >
