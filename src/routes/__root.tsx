@@ -67,7 +67,7 @@ function RootLayout() {
   return (
     <div className="min-h-screen bg-surface">
       <Sidebar />
-      <div className="lg:pl-[240px]">
+      <div className="lg:pl-60">
         <TopBar />
         <main className="px-4 pb-24 lg:px-8 lg:pb-8">
           <Outlet />
