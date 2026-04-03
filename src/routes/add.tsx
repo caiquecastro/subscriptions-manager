@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { BALANCE_TYPES } from "../components/BalanceCard";
+import { cn } from "../lib/cn";
 import { addBalance, addSubscription } from "../lib/firebase";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 
@@ -116,19 +117,26 @@ function AddEntry() {
         <button
           type="button"
           onClick={() => setEntryType("subscription")}
-          className={`flex flex-col items-center gap-3 rounded-xl p-6 transition-all ${
+          className={cn(
+            "flex flex-col items-center gap-3 rounded-xl p-6 transition-all",
             entryType === "subscription"
               ? "bg-primary/10 ring-2 ring-primary"
-              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low"
-          }`}
+              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low",
+          )}
         >
           <span
-            className={`material-symbols-outlined text-[28px] ${entryType === "subscription" ? "text-primary" : "text-on-surface-variant"}`}
+            className={cn(
+              "material-symbols-outlined text-[28px]",
+              entryType === "subscription" ? "text-primary" : "text-on-surface-variant",
+            )}
           >
             card_membership
           </span>
           <span
-            className={`text-sm font-semibold ${entryType === "subscription" ? "text-primary" : "text-on-surface"}`}
+            className={cn(
+              "text-sm font-semibold",
+              entryType === "subscription" ? "text-primary" : "text-on-surface",
+            )}
           >
             Subscription
           </span>
@@ -136,19 +144,26 @@ function AddEntry() {
         <button
           type="button"
           onClick={() => setEntryType("balance")}
-          className={`flex flex-col items-center gap-3 rounded-xl p-6 transition-all ${
+          className={cn(
+            "flex flex-col items-center gap-3 rounded-xl p-6 transition-all",
             entryType === "balance"
               ? "bg-primary/10 ring-2 ring-primary"
-              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low"
-          }`}
+              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low",
+          )}
         >
           <span
-            className={`material-symbols-outlined text-[28px] ${entryType === "balance" ? "text-primary" : "text-on-surface-variant"}`}
+            className={cn(
+              "material-symbols-outlined text-[28px]",
+              entryType === "balance" ? "text-primary" : "text-on-surface-variant",
+            )}
           >
             account_balance
           </span>
           <span
-            className={`text-sm font-semibold ${entryType === "balance" ? "text-primary" : "text-on-surface"}`}
+            className={cn(
+              "text-sm font-semibold",
+              entryType === "balance" ? "text-primary" : "text-on-surface",
+            )}
           >
             Balance
           </span>
@@ -273,11 +288,12 @@ function AddEntry() {
                     type="button"
                     key={cycle}
                     onClick={() => setBillingCycle(cycle)}
-                    className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+                    className={cn(
+                      "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
                       billingCycle === cycle
                         ? "bg-primary text-on-primary"
-                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
-                    }`}
+                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high",
+                    )}
                   >
                     {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
                   </button>

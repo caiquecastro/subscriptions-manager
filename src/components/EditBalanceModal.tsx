@@ -1,6 +1,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { cn } from "../lib/cn";
 import { type Balance, updateBalance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
 import { BALANCE_TYPES } from "./BalanceCard";
@@ -98,7 +99,10 @@ export function EditBalanceModal({
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     disabled={saving}
-                    className={`w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 ${type !== "Reward Points" ? "pl-8" : ""}`}
+                    className={cn(
+                      "w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30",
+                      type !== "Reward Points" && "pl-8",
+                    )}
                   />
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { cn } from "../lib/cn";
 import {
   compareDateStrings,
   getDaysUntilRenewal,
@@ -125,11 +126,12 @@ function Subscriptions() {
               type="button"
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
+              className={cn(
+                "rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors",
                 activeCategory === cat
                   ? "bg-primary text-on-primary"
-                  : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
-              }`}
+                  : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest",
+              )}
             >
               {cat}
             </button>
@@ -142,11 +144,12 @@ function Subscriptions() {
               type="button"
               key={s}
               onClick={() => setSortBy(s)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium ${
+              className={cn(
+                "rounded-md px-2.5 py-1 text-xs font-medium",
                 sortBy === s
                   ? "bg-primary/10 text-primary"
-                  : "text-on-surface-variant hover:bg-surface-container-high"
-              }`}
+                  : "text-on-surface-variant hover:bg-surface-container-high",
+              )}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
             </button>
@@ -214,13 +217,14 @@ function Subscriptions() {
                 </div>
                 <div className="text-right">
                   <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                    className={cn(
+                      "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
                       daysUntil <= 3
                         ? "bg-error-container/30 text-error"
                         : daysUntil <= 7
                           ? "bg-tertiary-container/20 text-tertiary"
-                          : "bg-surface-container-high text-on-surface-variant"
-                    }`}
+                          : "bg-surface-container-high text-on-surface-variant",
+                    )}
                   >
                     {daysUntil <= 0
                       ? "Due today"
