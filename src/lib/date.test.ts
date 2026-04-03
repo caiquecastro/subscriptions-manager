@@ -20,16 +20,23 @@ describe("date helpers", () => {
   });
 
   it("calculates days until renewal from a subscription", () => {
-    expect(getDaysUntilRenewal({ nextRenewal: "2026-04-03T12:00:00.000Z" }, now)).toBe(3);
+    const subscription = { nextRenewal: "2026-04-03T12:00:00.000Z" };
+    expect(getDaysUntilRenewal(subscription, now)).toBe(3);
   });
 
   it("identifies renewals inside the inclusive alert window", () => {
-    expect(isRenewalWithinDays({ nextRenewal: "2026-03-31T15:00:00.000Z" }, 3, now)).toBe(true);
-    expect(isRenewalWithinDays({ nextRenewal: "2026-04-03T12:00:00.000Z" }, 3, now)).toBe(true);
+    const subscription1 = { nextRenewal: "2026-03-31T15:00:00.000Z" };
+    expect(isRenewalWithinDays(subscription1, 3, now)).toBe(true);
+
+    const subscription2 = { nextRenewal: "2026-04-03T12:00:00.000Z" };
+    expect(isRenewalWithinDays(subscription2, 3, now)).toBe(true);
   });
 
   it("excludes past renewals and renewals outside the alert window", () => {
-    expect(isRenewalWithinDays({ nextRenewal: "2026-03-30T12:00:00.000Z" }, 3, now)).toBe(false);
-    expect(isRenewalWithinDays({ nextRenewal: "2026-04-04T12:00:00.000Z" }, 3, now)).toBe(false);
+    const subscription1 = { nextRenewal: "2026-03-30T12:00:00.000Z" };
+    expect(isRenewalWithinDays(subscription1, 3, now)).toBe(false);
+
+    const subscription2 = { nextRenewal: "2026-04-04T12:00:00.000Z" };
+    expect(isRenewalWithinDays(subscription2, 3, now)).toBe(false);
   });
 });

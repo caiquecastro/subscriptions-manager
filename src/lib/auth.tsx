@@ -1,22 +1,16 @@
-import type { PropsWithChildren } from "react";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
 import type { QueryClient } from "@tanstack/react-query";
 import type { User } from "firebase/auth";
 import {
-  GoogleAuthProvider,
   browserLocalPersistence,
+  GoogleAuthProvider,
   getAuth,
   onAuthStateChanged,
   setPersistence,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
+import type { PropsWithChildren } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { app } from "./firebase-app";
 
 type AuthStatus = "loading" | "authenticated" | "signed_out";
@@ -64,7 +58,9 @@ export function AuthProvider({
 }: PropsWithChildren<{ queryClient: QueryClient }>) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<User | null>(null);
-  const [unauthorizedEmail, setUnauthorizedEmail] = useState<string | null>(null);
+  const [unauthorizedEmail, setUnauthorizedEmail] = useState<string | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,7 +69,9 @@ export function AuthProvider({
     const auth = getClientAuth();
 
     void setPersistence(auth, browserLocalPersistence).catch(() => {
-      setError("Could not persist your session. You may need to sign in again.");
+      setError(
+        "Could not persist your session. You may need to sign in again.",
+      );
     });
 
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {

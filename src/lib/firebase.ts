@@ -1,12 +1,12 @@
 import {
+  addDoc,
   collection,
+  deleteDoc,
   doc,
   getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
   orderBy,
+  query,
+  updateDoc,
 } from "firebase/firestore";
 import { getCurrentUser } from "./auth";
 import { db } from "./firebase-app";
@@ -105,7 +105,10 @@ export async function updateSubscription(
 ) {
   const user = requireCurrentUser();
   return withTimeout(
-    updateDoc(doc(db, getUserCollectionPath(user.uid, "subscriptions"), id), data),
+    updateDoc(
+      doc(db, getUserCollectionPath(user.uid, "subscriptions"), id),
+      data,
+    ),
   );
 }
 

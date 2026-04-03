@@ -46,7 +46,9 @@ async function migrateCollection(db, uid, collectionName, overwrite) {
 
     if (targetDoc.exists && !overwrite) {
       skipped += 1;
-      console.log(`Skipped ${collectionName}/${sourceDoc.id} (already exists).`);
+      console.log(
+        `Skipped ${collectionName}/${sourceDoc.id} (already exists).`,
+      );
       continue;
     }
 
@@ -90,7 +92,9 @@ async function main() {
   console.log(
     `subscriptions: copied=${subscriptions.copied}, skipped=${subscriptions.skipped}`,
   );
-  console.log(`balances: copied=${balances.copied}, skipped=${balances.skipped}`);
+  console.log(
+    `balances: copied=${balances.copied}, skipped=${balances.skipped}`,
+  );
 }
 
 main().catch((error) => {

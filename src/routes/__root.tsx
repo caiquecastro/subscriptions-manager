@@ -1,9 +1,9 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import {
+  createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
 } from "@tanstack/react-router";
 import { useState } from "react";
 import AuthScreen from "../components/AuthScreen";
