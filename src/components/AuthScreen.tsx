@@ -3,8 +3,7 @@ import { useAuth } from "../lib/auth";
 
 export default function AuthScreen() {
   const [signingIn, setSigningIn] = useState(false);
-  const { allowedEmail, error, unauthorizedEmail, signInWithGoogle } =
-    useAuth();
+  const { error, unauthorizedEmail, signInWithGoogle } = useAuth();
 
   const handleSignIn = async () => {
     setSigningIn(true);
@@ -42,22 +41,6 @@ export default function AuthScreen() {
                 </p>
                 <p className="mt-2 text-sm font-medium text-on-surface">
                   Google sign-in only
-                </p>
-              </div>
-              <div className="rounded-2xl bg-surface-container-low p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
-                  Storage
-                </p>
-                <p className="mt-2 text-sm font-medium text-on-surface">
-                  Firestore data scoped per user
-                </p>
-              </div>
-              <div className="rounded-2xl bg-surface-container-low p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-on-surface-variant">
-                  Allowlist
-                </p>
-                <p className="mt-2 text-sm font-medium text-on-surface">
-                  {allowedEmail ?? "Any signed-in Google user"}
                 </p>
               </div>
             </div>
@@ -108,10 +91,6 @@ export default function AuthScreen() {
               </div>
             )}
 
-            <p className="mt-6 text-xs leading-5 text-on-surface-variant">
-              Set <code>VITE_ALLOWED_EMAIL</code> to restrict access to a single
-              Google account. Leave it unset to allow any signed-in Google user.
-            </p>
           </div>
         </section>
       </div>
