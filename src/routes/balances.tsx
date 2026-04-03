@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { type Balance } from "../lib/firebase";
-import { balancesQueryOptions } from "../lib/query";
 import { BalanceCard, formatBalanceAmount } from "../components/BalanceCard";
 import { EditBalanceModal } from "../components/EditBalanceModal";
+import type { Balance } from "../lib/firebase";
+import { balancesQueryOptions } from "../lib/query";
 
 export const Route = createFileRoute("/balances")({ component: Balances });
 
@@ -73,7 +73,11 @@ function Balances() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {balances.map((bal) => (
-            <BalanceCard key={bal.id} balance={bal} onEdit={setEditingBalance} />
+            <BalanceCard
+              key={bal.id}
+              balance={bal}
+              onEdit={setEditingBalance}
+            />
           ))}
         </div>
       </section>
@@ -92,7 +96,7 @@ function Balances() {
           <div className="mt-4 space-y-3">
             {expiringSoon.map((bal) => {
               const days = Math.ceil(
-                (new Date(bal.expiresAt!).getTime() - Date.now()) /
+                (new Date(bal.expiresAt as string).getTime() - Date.now()) /
                   (1000 * 60 * 60 * 24),
               );
               return (

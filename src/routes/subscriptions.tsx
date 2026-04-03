@@ -1,15 +1,13 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   compareDateStrings,
   getDaysUntilRenewal,
   isRenewalWithinDays,
 } from "../lib/date";
-import {
-  getMonthlySubscriptionCost,
-} from "../lib/subscriptions";
 import { subscriptionsQueryOptions } from "../lib/query";
+import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
 export const Route = createFileRoute("/subscriptions")({
   component: Subscriptions,
@@ -36,7 +34,8 @@ function Subscriptions() {
   const filtered = subscriptions
     .filter((s) => activeCategory === "All" || s.category === activeCategory)
     .sort((a, b) => {
-      if (sortBy === "renewal") return compareDateStrings(a.nextRenewal, b.nextRenewal);
+      if (sortBy === "renewal")
+        return compareDateStrings(a.nextRenewal, b.nextRenewal);
       if (sortBy === "price")
         return getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a);
       return a.name.localeCompare(b.name);
@@ -75,7 +74,7 @@ function Subscriptions() {
         </div>
         <Link
           to="/add"
-          search={{ type: 'subscription' }}
+          search={{ type: "subscription" }}
           className="signature-gradient inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-on-primary shadow-lg transition-transform hover:scale-[1.02]"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
@@ -123,6 +122,7 @@ function Subscriptions() {
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
             <button
+              type="button"
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
@@ -139,6 +139,7 @@ function Subscriptions() {
           <span className="text-xs text-on-surface-variant">Sort by:</span>
           {(["renewal", "price", "name"] as const).map((s) => (
             <button
+              type="button"
               key={s}
               onClick={() => setSortBy(s)}
               className={`rounded-md px-2.5 py-1 text-xs font-medium ${
@@ -179,12 +180,18 @@ function Subscriptions() {
                   </div>
                 </div>
                 <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-container-high">
+                  <button
+                    type="button"
+                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-container-high"
+                  >
                     <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
                       edit
                     </span>
                   </button>
-                  <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-error-container/30">
+                  <button
+                    type="button"
+                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-error-container/30"
+                  >
                     <span className="material-symbols-outlined text-[16px] text-error">
                       cancel
                     </span>

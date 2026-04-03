@@ -3,12 +3,8 @@ import { useAuth } from "../lib/auth";
 
 export default function AuthScreen() {
   const [signingIn, setSigningIn] = useState(false);
-  const {
-    allowedEmail,
-    error,
-    unauthorizedEmail,
-    signInWithGoogle,
-  } = useAuth();
+  const { allowedEmail, error, unauthorizedEmail, signInWithGoogle } =
+    useAuth();
 
   const handleSignIn = async () => {
     setSigningIn(true);
@@ -25,7 +21,9 @@ export default function AuthScreen() {
         <section className="grid w-full gap-8 rounded-[32px] bg-surface-container-lowest p-8 ambient-shadow lg:grid-cols-[1.15fr_0.85fr] lg:p-12">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-3 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-              <span className="material-symbols-outlined text-[18px]">lock</span>
+              <span className="material-symbols-outlined text-[18px]">
+                lock
+              </span>
               Private portfolio access
             </div>
             <div className="space-y-3">
@@ -83,6 +81,7 @@ export default function AuthScreen() {
             </div>
 
             <button
+              type="button"
               onClick={handleSignIn}
               disabled={signingIn}
               className="flex items-center justify-center gap-3 rounded-2xl bg-on-surface px-5 py-3 text-sm font-semibold text-surface transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"

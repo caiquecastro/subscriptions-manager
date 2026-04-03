@@ -1,4 +1,4 @@
-import { type Balance } from "../lib/firebase";
+import type { Balance } from "../lib/firebase";
 
 export const BALANCE_TYPES = [
   "Store Credit",
@@ -12,8 +12,8 @@ export const BALANCE_TYPES = [
 
 export function formatBalanceAmount(balance: Balance) {
   return balance.type === "Reward Points"
-    ? balance.amount.toLocaleString() + " pts"
-    : "$" + balance.amount.toFixed(2);
+    ? `${balance.amount.toLocaleString()} pts`
+    : `$${balance.amount.toFixed(2)}`;
 }
 
 export function BalanceCard({
@@ -24,17 +24,18 @@ export function BalanceCard({
   onEdit: (balance: Balance) => void;
 }) {
   return (
-    <div
-      className="group cursor-pointer rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
-      onClick={() => onEdit(balance)}
-    >
+    <div className="group w-full rounded-xl bg-surface-container-lowest p-5 text-left ambient-shadow transition-transform">
       <div className="flex items-center justify-between">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/8">
           <span className="material-symbols-outlined text-[20px] text-primary">
             {balance.icon}
           </span>
         </div>
-        <button className="flex h-8 w-8 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-surface-container-high group-hover:opacity-100">
+        <button
+          type="button"
+          className="flex h-8 w-8 items-center justify-center rounded-md opacity-0 transition-opacity hover:bg-surface-container-high group-hover:opacity-100 cursor-pointer"
+          onClick={() => onEdit(balance)}
+        >
           <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
             edit
           </span>

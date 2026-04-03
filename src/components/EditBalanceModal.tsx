@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { Dialog } from "@base-ui/react/dialog";
-import { updateBalance, type Balance } from "../lib/firebase";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { type Balance, updateBalance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
 import { BALANCE_TYPES } from "./BalanceCard";
 
@@ -20,7 +20,7 @@ export function EditBalanceModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = parseFloat(amount);
-    if (isNaN(parsed) || parsed < 0) return;
+    if (Number.isNaN(parsed) || parsed < 0) return;
     setSaving(true);
     try {
       await updateBalance(balance.id, { type, amount: parsed });
@@ -56,10 +56,14 @@ export function EditBalanceModal({
 
             <form onSubmit={handleSubmit} className="mt-5 space-y-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-on-surface">
+                <label
+                  htmlFor="edit-balance-type"
+                  className="mb-1.5 block text-sm font-medium text-on-surface"
+                >
                   Type
                 </label>
                 <select
+                  id="edit-balance-type"
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                   disabled={saving}
@@ -74,7 +78,10 @@ export function EditBalanceModal({
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-on-surface">
+                <label
+                  htmlFor="edit-balance-amount"
+                  className="mb-1.5 block text-sm font-medium text-on-surface"
+                >
                   Amount
                 </label>
                 <div className="relative">
@@ -84,13 +91,13 @@ export function EditBalanceModal({
                     </span>
                   )}
                   <input
+                    id="edit-balance-amount"
                     type="number"
                     step="0.01"
                     min="0"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     disabled={saving}
-                    autoFocus
                     className={`w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30 ${type !== "Reward Points" ? "pl-8" : ""}`}
                   />
                 </div>
