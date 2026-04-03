@@ -7,6 +7,7 @@ import {
   orderBy,
   query,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { getCurrentUser } from "./auth";
 import { db } from "./firebase-app";
@@ -34,6 +35,7 @@ export interface Subscription {
   name: string;
   category: string;
   cost: number;
+  currency?: "BRL" | "USD" | "EUR";
   billingCycle: "monthly" | "yearly" | "quarterly";
   nextRenewal: string;
   status: "active" | "paused" | "cancelled";
@@ -53,9 +55,21 @@ export interface Balance {
   createdAt: string;
 }
 
+export interface Invoice {
+  id: string;
+  subscriptionId: string;
+  date: string;
+  amountBRL: number;
+  status: "paid" | "pending";
+  fileUrl?: string;
+  fileName?: string;
+  notes?: string;
+  createdAt: string;
+}
+
 export function getUserCollectionPath(
   uid: string,
-  collectionName: "subscriptions" | "balances"
+  collectionName: "subscriptions" | "balances" | "invoices",
 ) {
   return `users/${uid}/${collectionName}`;
 }
@@ -152,4 +166,68 @@ export async function deleteBalance(id: string) {
   return withTimeout(
     deleteDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id))
   );
+}
+
+// Invoices
+export async function getInvoices(
+  subscriptionId?: string,
+): Promise<Invoice[]> {
+  const user = requireCurrentUser();
+  const colRef = collection(
+    db,
+    getUserCollectionPath(user.uid, "invoices"),
+  );
+  const q = subscriptionId
+    ? query(
+        colRef,
+        where("subscriptionId", "==", subscriptionId),
+        orderBy("date", "desc"),
+      )
+    : query(colRef, orderBy("date", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Invoice);
+}
+
+export async function addInvoice(
+  invoice: Omit<Invoice, "id" | "createdAt">,
+) {
+  const user = requireCurrentUser();
+  return withTimeout(
+    addDoc(
+      collection(db, getUserCollectionPath(user.uid, "invoices")),
+      stripUndefined({
+        ...invoice,
+        createdAt: new Date().toISOString(),
+      }),
+    ),
+  );
+}
+
+export async function updateInvoice(id: string, data: Partial<Invoice>) {
+  const user = requireCurrentUser();
+  return withTimeout(
+    updateDoc(
+      doc(db, getUserCollectionPath(user.uid, "invoices"), id),
+      data,
+    ),
+  );
+}
+
+export async function deleteInvoice(id: string) {
+  const user = requireCurrentUser();
+  return withTimeout(
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "invoices"), id)),
+  );
+}
+
+export async function getSubscription(
+  id: string,
+): Promise<Subscription | null> {
+  const user = requireCurrentUser();
+  const q = query(
+    collection(db, getUserCollectionPath(user.uid, "subscriptions")),
+  );
+  const snapshot = await getDocs(q);
+  const d = snapshot.docs.find((d) => d.id === id);
+  return d ? ({ id: d.id, ...d.data() } as Subscription) : null;
 }

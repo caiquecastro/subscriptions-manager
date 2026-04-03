@@ -3,6 +3,11 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { BALANCE_TYPES } from "../components/BalanceCard";
 import { cn } from "../lib/cn";
+import {
+  type Currency,
+  SUPPORTED_CURRENCIES,
+  getCurrencySymbol,
+} from "../lib/currency";
 import { addBalance, addSubscription } from "../lib/firebase";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 
@@ -46,6 +51,7 @@ function AddEntry() {
   const [category, setCategory] = useState("");
   const [balanceType, setBalanceType] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
+  const [currency, setCurrency] = useState<Currency>("BRL");
   const [notes, setNotes] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -65,6 +71,7 @@ function AddEntry() {
           name,
           category: category || "Other",
           cost: parseFloat(cost),
+          currency,
           billingCycle,
           nextRenewal: nextRenewal || new Date().toISOString().split("T")[0],
           status: "active",
@@ -230,7 +237,9 @@ function AddEntry() {
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
-              $
+              {entryType === "subscription"
+                ? getCurrencySymbol(currency)
+                : "$"}
             </span>
             <input
               id="entry-cost"
@@ -246,6 +255,33 @@ function AddEntry() {
 
         {entryType === "subscription" ? (
           <>
+            {/* Currency */}
+            <div>
+              <label
+                htmlFor="entry-currency"
+                className="mb-1.5 block text-sm font-medium text-on-surface"
+              >
+                Currency
+              </label>
+              <div className="flex gap-2">
+                {SUPPORTED_CURRENCIES.map((cur) => (
+                  <button
+                    type="button"
+                    key={cur}
+                    onClick={() => setCurrency(cur)}
+                    className={cn(
+                      "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
+                      currency === cur
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high",
+                    )}
+                  >
+                    {getCurrencySymbol(cur)} {cur}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Category */}
             <div>
               <label

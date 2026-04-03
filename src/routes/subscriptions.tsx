@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { cn } from "../lib/cn";
+import { formatCurrency } from "../lib/currency";
 import {
   compareDateStrings,
   getDaysUntilRenewal,
@@ -42,9 +43,21 @@ function Subscriptions() {
       return a.name.localeCompare(b.name);
     });
 
-  const totalMonthly = subscriptions
+  const monthlyByCurrency = subscriptions
     .filter((s) => s.status === "active")
-    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
+    .reduce(
+      (acc, s) => {
+        const cur = s.currency ?? "USD";
+        acc[cur] = (acc[cur] || 0) + getMonthlySubscriptionCost(s);
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+  const totalMonthly = Object.values(monthlyByCurrency).reduce(
+    (sum, v) => sum + v,
+    0,
+  );
 
   const urgentRenewals = subscriptions.filter((s) => isRenewalWithinDays(s, 3));
 
@@ -70,7 +83,14 @@ function Subscriptions() {
           </h1>
           <p className="text-sm text-on-surface-variant">
             {subscriptions.filter((s) => s.status === "active").length} active
-            &middot; ${totalMonthly.toFixed(2)}/mo total
+            &middot;{" "}
+            {Object.entries(monthlyByCurrency)
+              .map(
+                ([cur, amount]) =>
+                  `${formatCurrency(amount, cur as "BRL" | "USD" | "EUR")}/mo`,
+              )
+              .join(" + ")}{" "}
+            total
           </p>
         </div>
         <Link
@@ -94,8 +114,8 @@ function Subscriptions() {
               Urgent Renewal
             </p>
             <p className="text-xs text-on-surface-variant">
-              {urgentRenewals[0].name} renews within 48 hours — $
-              {urgentRenewals[0].cost.toFixed(2)}
+              {urgentRenewals[0].name} renews within 48 hours —{" "}
+              {formatCurrency(urgentRenewals[0].cost, urgentRenewals[0].currency)}
             </p>
           </div>
         </div>
@@ -111,8 +131,8 @@ function Subscriptions() {
               High-Cost Alert
             </p>
             <p className="text-xs text-on-surface-variant">
-              {highestCost.name} is {highestPercent}% of your monthly spend ($
-              {highestMonthlyCost.toFixed(2)}/mo)
+              {highestCost.name} is {highestPercent}% of your monthly spend (
+              {formatCurrency(highestMonthlyCost, highestCost.currency)}/mo)
             </p>
           </div>
         </div>
@@ -162,9 +182,11 @@ function Subscriptions() {
         {filtered.map((sub) => {
           const daysUntil = getDaysUntilRenewal(sub);
           return (
-            <div
+            <Link
               key={sub.id}
-              className="group rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
+              to="/subscriptions/$id"
+              params={{ id: sub.id }}
+              className="group block rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -204,7 +226,7 @@ function Subscriptions() {
               <div className="mt-4 flex items-end justify-between">
                 <div>
                   <p className="font-headline text-2xl font-bold text-on-surface">
-                    ${sub.cost.toFixed(2)}
+                    {formatCurrency(sub.cost, sub.currency)}
                   </p>
                   <p className="text-xs text-on-surface-variant">
                     /
@@ -232,7 +254,7 @@ function Subscriptions() {
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

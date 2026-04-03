@@ -1,5 +1,5 @@
 import { QueryClient, queryOptions } from "@tanstack/react-query";
-import { getBalances, getSubscriptions } from "./firebase";
+import { getBalances, getInvoices, getSubscriptions } from "./firebase";
 
 export function createQueryClient() {
   return new QueryClient({
@@ -20,3 +20,10 @@ export const balancesQueryOptions = queryOptions({
   queryKey: ["balances"],
   queryFn: getBalances,
 });
+
+export function subscriptionInvoicesQueryOptions(subscriptionId: string) {
+  return queryOptions({
+    queryKey: ["invoices", subscriptionId],
+    queryFn: () => getInvoices(subscriptionId),
+  });
+}
