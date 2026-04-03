@@ -9,6 +9,12 @@
     "includes": ["**", "!!**/dist", "!!src/routeTree.gen.ts"],
     "ignoreUnknown": true
   },
+  "css": {
+    "parser": {
+      "allowWrongLineComments": true,
+      "tailwindDirectives": true
+    }
+  },
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
