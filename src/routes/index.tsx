@@ -22,7 +22,7 @@ function Dashboard() {
     .filter((s) => s.status === "active")
     .sort(
       (a, b) =>
-        new Date(a.nextRenewal).getTime() - new Date(b.nextRenewal).getTime(),
+        new Date(a.nextRenewal).getTime() - new Date(b.nextRenewal).getTime()
     )
     .slice(0, 3);
 

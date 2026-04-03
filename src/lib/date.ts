@@ -12,7 +12,7 @@ export function compareDateStrings(a: string, b: string) {
 
 export function getDaysUntilRenewal(
   subscription: Pick<Subscription, "nextRenewal">,
-  now = new Date(),
+  now = new Date()
 ) {
   return getDaysUntilDate(subscription.nextRenewal, now);
 }
@@ -20,7 +20,7 @@ export function getDaysUntilRenewal(
 export function isRenewalWithinDays(
   subscription: Pick<Subscription, "nextRenewal">,
   days: number,
-  now = new Date(),
+  now = new Date()
 ) {
   const daysUntilRenewal = getDaysUntilRenewal(subscription, now);
   return daysUntilRenewal >= 0 && daysUntilRenewal <= days;

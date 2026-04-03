@@ -24,7 +24,7 @@ function Balances() {
   const expiringSoon = balances.filter((b) => {
     if (!b.expiresAt) return false;
     const days = Math.ceil(
-      (new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+      (new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
     );
     return days <= 180;
   });
@@ -97,7 +97,7 @@ function Balances() {
             {expiringSoon.map((bal) => {
               const days = Math.ceil(
                 (new Date(bal.expiresAt as string).getTime() - Date.now()) /
-                  (1000 * 60 * 60 * 24),
+                  (1000 * 60 * 60 * 24)
               );
               return (
                 <div

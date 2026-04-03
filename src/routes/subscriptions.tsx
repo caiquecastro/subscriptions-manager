@@ -50,7 +50,7 @@ function Subscriptions() {
   const highestCost = [...subscriptions]
     .filter((s) => s.status === "active")
     .sort(
-      (a, b) => getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a),
+      (a, b) => getMonthlySubscriptionCost(b) - getMonthlySubscriptionCost(a)
     )[0];
   const highestMonthlyCost = highestCost
     ? getMonthlySubscriptionCost(highestCost)

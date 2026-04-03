@@ -30,17 +30,17 @@ function Analytics() {
       acc[s.category] = (acc[s.category] || 0) + monthlyCost;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   );
 
   const sortedCategories = Object.entries(categoryBreakdown).sort(
-    (a, b) => b[1] - a[1],
+    (a, b) => b[1] - a[1]
   );
   const maxCategoryValue = sortedCategories[0]?.[1] || 1;
 
   const totalBalance = balances.reduce(
     (sum, b) => (b.type === "Reward Points" ? sum : sum + b.amount),
-    0,
+    0
   );
 
   return (

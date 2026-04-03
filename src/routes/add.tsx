@@ -8,7 +8,7 @@ import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 export const Route = createFileRoute("/add")({
   component: AddEntry,
   validateSearch: (
-    search: Record<string, unknown>,
+    search: Record<string, unknown>
   ): { type?: "subscription" | "balance" } => ({
     type:
       search.type === "balance" || search.type === "subscription"
@@ -34,7 +34,7 @@ function AddEntry() {
   const queryClient = useQueryClient();
   const { type } = Route.useSearch();
   const [entryType, setEntryType] = useState<"subscription" | "balance">(
-    type ?? "subscription",
+    type ?? "subscription"
   );
   const [name, setName] = useState("");
   const [cost, setCost] = useState("");
@@ -51,7 +51,7 @@ function AddEntry() {
   const [error, setError] = useState("");
 
   const filteredSuggestions = servicesSuggestions.filter(
-    (s) => s.toLowerCase().includes(name.toLowerCase()) && name.length > 0,
+    (s) => s.toLowerCase().includes(name.toLowerCase()) && name.length > 0
   );
 
   const handleSave = async () => {
@@ -94,7 +94,7 @@ function AddEntry() {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to save. Check your connection and try again.",
+          : "Failed to save. Check your connection and try again."
       );
     }
   };

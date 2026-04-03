@@ -19,11 +19,11 @@ function withTimeout<T>(promise: Promise<T>, ms = 10000): Promise<T> {
         () =>
           reject(
             new Error(
-              "Request timed out. Check your Firebase config and Firestore security rules.",
-            ),
+              "Request timed out. Check your Firebase config and Firestore security rules."
+            )
           ),
-        ms,
-      ),
+        ms
+      )
     ),
   ]);
 }
@@ -55,7 +55,7 @@ export interface Balance {
 
 export function getUserCollectionPath(
   uid: string,
-  collectionName: "subscriptions" | "balances",
+  collectionName: "subscriptions" | "balances"
 ) {
   return `users/${uid}/${collectionName}`;
 }
@@ -75,7 +75,7 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   const user = requireCurrentUser();
   const q = query(
     collection(db, getUserCollectionPath(user.uid, "subscriptions")),
-    orderBy("nextRenewal", "asc"),
+    orderBy("nextRenewal", "asc")
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Subscription);
@@ -83,39 +83,39 @@ export async function getSubscriptions(): Promise<Subscription[]> {
 
 function stripUndefined(obj: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(
-    Object.entries(obj).filter(([, v]) => v !== undefined),
+    Object.entries(obj).filter(([, v]) => v !== undefined)
   );
 }
 
 export async function addSubscription(
-  sub: Omit<Subscription, "id" | "createdAt">,
+  sub: Omit<Subscription, "id" | "createdAt">
 ) {
   const user = requireCurrentUser();
   return withTimeout(
     addDoc(
       collection(db, getUserCollectionPath(user.uid, "subscriptions")),
-      stripUndefined({ ...sub, createdAt: new Date().toISOString() }),
-    ),
+      stripUndefined({ ...sub, createdAt: new Date().toISOString() })
+    )
   );
 }
 
 export async function updateSubscription(
   id: string,
-  data: Partial<Subscription>,
+  data: Partial<Subscription>
 ) {
   const user = requireCurrentUser();
   return withTimeout(
     updateDoc(
       doc(db, getUserCollectionPath(user.uid, "subscriptions"), id),
-      data,
-    ),
+      data
+    )
   );
 }
 
 export async function deleteSubscription(id: string) {
   const user = requireCurrentUser();
   return withTimeout(
-    deleteDoc(doc(db, getUserCollectionPath(user.uid, "subscriptions"), id)),
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "subscriptions"), id))
   );
 }
 
@@ -124,7 +124,7 @@ export async function getBalances(): Promise<Balance[]> {
   const user = requireCurrentUser();
   const q = query(
     collection(db, getUserCollectionPath(user.uid, "balances")),
-    orderBy("createdAt", "desc"),
+    orderBy("createdAt", "desc")
   );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Balance);
@@ -135,21 +135,21 @@ export async function addBalance(bal: Omit<Balance, "id" | "createdAt">) {
   return withTimeout(
     addDoc(
       collection(db, getUserCollectionPath(user.uid, "balances")),
-      stripUndefined({ ...bal, createdAt: new Date().toISOString() }),
-    ),
+      stripUndefined({ ...bal, createdAt: new Date().toISOString() })
+    )
   );
 }
 
 export async function updateBalance(id: string, data: Partial<Balance>) {
   const user = requireCurrentUser();
   return withTimeout(
-    updateDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id), data),
+    updateDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id), data)
   );
 }
 
 export async function deleteBalance(id: string) {
   const user = requireCurrentUser();
   return withTimeout(
-    deleteDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id)),
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id))
   );
 }

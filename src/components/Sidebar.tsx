@@ -42,7 +42,7 @@ export default function Sidebar() {
                   "flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "text-on-surface-variant hover:bg-surface-container-high",
+                    : "text-on-surface-variant hover:bg-surface-container-high"
                 )}
               >
                 <span className="material-symbols-outlined text-[20px]">
@@ -99,7 +99,7 @@ export default function Sidebar() {
               to={item.to}
               className={cn(
                 "flex flex-col items-center gap-0.5 px-3 py-1.5 text-xs",
-                isActive ? "text-primary" : "text-on-surface-variant",
+                isActive ? "text-primary" : "text-on-surface-variant"
               )}
             >
               <span className="material-symbols-outlined text-[22px]">

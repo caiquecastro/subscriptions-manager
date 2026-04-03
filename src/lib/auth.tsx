@@ -59,7 +59,7 @@ export function AuthProvider({
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<User | null>(null);
   const [unauthorizedEmail, setUnauthorizedEmail] = useState<string | null>(
-    null,
+    null
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -70,7 +70,7 @@ export function AuthProvider({
 
     void setPersistence(auth, browserLocalPersistence).catch(() => {
       setError(
-        "Could not persist your session. You may need to sign in again.",
+        "Could not persist your session. You may need to sign in again."
       );
     });
 
@@ -118,7 +118,7 @@ export function AuthProvider({
           setError(
             signInError instanceof Error
               ? signInError.message
-              : "Google sign-in failed. Please try again.",
+              : "Google sign-in failed. Please try again."
           );
         }
       },
@@ -128,7 +128,7 @@ export function AuthProvider({
         await signOut(getClientAuth());
       },
     }),
-    [error, status, unauthorizedEmail, user],
+    [error, status, unauthorizedEmail, user]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -47,7 +47,7 @@ async function migrateCollection(db, uid, collectionName, overwrite) {
     if (targetDoc.exists && !overwrite) {
       skipped += 1;
       console.log(
-        `Skipped ${collectionName}/${sourceDoc.id} (already exists).`,
+        `Skipped ${collectionName}/${sourceDoc.id} (already exists).`
       );
       continue;
     }
@@ -67,7 +67,7 @@ async function main() {
   if (!uid) {
     console.error("Missing required --uid argument.");
     console.error(
-      "Usage: node scripts/migrate-user-data.mjs --uid=<firebase-auth-uid> [--service-account=/abs/path/service-account.json] [--overwrite]",
+      "Usage: node scripts/migrate-user-data.mjs --uid=<firebase-auth-uid> [--service-account=/abs/path/service-account.json] [--overwrite]"
     );
     process.exit(1);
   }
@@ -83,17 +83,17 @@ async function main() {
     db,
     uid,
     "subscriptions",
-    overwrite,
+    overwrite
   );
   const balances = await migrateCollection(db, uid, "balances", overwrite);
 
   console.log("");
   console.log("Migration summary");
   console.log(
-    `subscriptions: copied=${subscriptions.copied}, skipped=${subscriptions.skipped}`,
+    `subscriptions: copied=${subscriptions.copied}, skipped=${subscriptions.skipped}`
   );
   console.log(
-    `balances: copied=${balances.copied}, skipped=${balances.skipped}`,
+    `balances: copied=${balances.copied}, skipped=${balances.skipped}`
   );
 }
 
