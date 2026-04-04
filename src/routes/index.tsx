@@ -18,7 +18,7 @@ function Dashboard() {
         acc[cur] = (acc[cur] || 0) + getMonthlySubscriptionCost(s);
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
 
   const totalBalance = balances.reduce((sum, b) => sum + b.amount, 0);
@@ -37,7 +37,7 @@ function Dashboard() {
       acc[cur] = (acc[cur] || 0) + s.cost;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   );
 
   const recentSubs = subscriptions.slice(0, 4);
@@ -107,9 +107,8 @@ function Dashboard() {
             <p className="text-sm text-on-surface-variant">
               {upcomingRenewals.length} items &middot;{" "}
               {Object.entries(upcomingTotalByCurrency)
-                .map(
-                  ([cur, amount]) =>
-                    formatCurrency(amount, cur as "BRL" | "USD" | "EUR"),
+                .map(([cur, amount]) =>
+                  formatCurrency(amount, cur as "BRL" | "USD" | "EUR")
                 )
                 .join(" + ")}{" "}
               total

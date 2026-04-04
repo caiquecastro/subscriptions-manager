@@ -51,12 +51,12 @@ function Subscriptions() {
         acc[cur] = (acc[cur] || 0) + getMonthlySubscriptionCost(s);
         return acc;
       },
-      {} as Record<string, number>,
+      {} as Record<string, number>
     );
 
   const totalMonthly = Object.values(monthlyByCurrency).reduce(
     (sum, v) => sum + v,
-    0,
+    0
   );
 
   const urgentRenewals = subscriptions.filter((s) => isRenewalWithinDays(s, 3));
@@ -87,7 +87,7 @@ function Subscriptions() {
             {Object.entries(monthlyByCurrency)
               .map(
                 ([cur, amount]) =>
-                  `${formatCurrency(amount, cur as "BRL" | "USD" | "EUR")}/mo`,
+                  `${formatCurrency(amount, cur as "BRL" | "USD" | "EUR")}/mo`
               )
               .join(" + ")}{" "}
             total
@@ -115,7 +115,10 @@ function Subscriptions() {
             </p>
             <p className="text-xs text-on-surface-variant">
               {urgentRenewals[0].name} renews within 48 hours —{" "}
-              {formatCurrency(urgentRenewals[0].cost, urgentRenewals[0].currency)}
+              {formatCurrency(
+                urgentRenewals[0].cost,
+                urgentRenewals[0].currency
+              )}
             </p>
           </div>
         </div>
@@ -150,7 +153,7 @@ function Subscriptions() {
                 "rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors",
                 activeCategory === cat
                   ? "bg-primary text-on-primary"
-                  : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest",
+                  : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest"
               )}
             >
               {cat}
@@ -168,7 +171,7 @@ function Subscriptions() {
                 "rounded-md px-2.5 py-1 text-xs font-medium",
                 sortBy === s
                   ? "bg-primary/10 text-primary"
-                  : "text-on-surface-variant hover:bg-surface-container-high",
+                  : "text-on-surface-variant hover:bg-surface-container-high"
               )}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -245,7 +248,7 @@ function Subscriptions() {
                         ? "bg-error-container/30 text-error"
                         : daysUntil <= 7
                           ? "bg-tertiary-container/20 text-tertiary"
-                          : "bg-surface-container-high text-on-surface-variant",
+                          : "bg-surface-container-high text-on-surface-variant"
                     )}
                   >
                     {daysUntil <= 0

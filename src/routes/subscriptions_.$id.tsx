@@ -9,6 +9,7 @@ import {
   deleteInvoice,
   type Invoice,
   type Subscription,
+  updateSubscription,
 } from "../lib/firebase";
 import {
   subscriptionInvoicesQueryOptions,
@@ -16,6 +17,11 @@ import {
 } from "../lib/query";
 import { uploadInvoiceFile } from "../lib/storage";
 import { useAuth } from "../lib/auth";
+import {
+  SubscriptionForm,
+  subscriptionToFormValues,
+  type SubscriptionFormValues,
+} from "../components/SubscriptionForm";
 
 export const Route = createFileRoute("/subscriptions_/$id")({
   component: SubscriptionDetail,
@@ -66,7 +72,70 @@ function SubscriptionDetail() {
 }
 
 function SubscriptionHeader({ subscription }: { subscription: Subscription }) {
+  const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [error, setError] = useState("");
   const daysUntil = getDaysUntilRenewal(subscription);
+
+  const handleSave = async (values: SubscriptionFormValues) => {
+    setError("");
+    try {
+      await updateSubscription(subscription.id, {
+        name: values.name,
+        category: values.category,
+        cost: parseFloat(values.cost),
+        currency: values.currency,
+        billingCycle: values.billingCycle,
+        nextRenewal: values.nextRenewal,
+        status: values.status,
+        notes: values.notes || undefined,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: subscriptionsQueryOptions.queryKey,
+      });
+      setEditing(false);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to save. Try again."
+      );
+      throw err;
+    }
+  };
+
+  if (editing) {
+    return (
+      <section className="rounded-xl bg-surface-container-lowest p-6 ambient-shadow">
+        <div className="mb-5 flex items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/8">
+            <span className="material-symbols-outlined text-[28px] text-primary">
+              {subscription.icon}
+            </span>
+          </div>
+          <h2 className="font-headline text-xl font-bold text-on-surface">
+            Edit Subscription
+          </h2>
+        </div>
+
+        {error && (
+          <div className="mb-4 flex items-start gap-3 rounded-xl bg-error-container/30 p-3">
+            <span className="material-symbols-outlined text-[18px] text-error">
+              error
+            </span>
+            <p className="text-sm text-on-error-container">{error}</p>
+          </div>
+        )}
+
+        <SubscriptionForm
+          defaultValues={subscriptionToFormValues(subscription)}
+          onSubmit={handleSave}
+          onCancel={() => {
+            setEditing(false);
+            setError("");
+          }}
+        />
+      </section>
+    );
+  }
 
   return (
     <section className="rounded-xl bg-surface-container-lowest p-6 ambient-shadow">
@@ -84,18 +153,30 @@ function SubscriptionHeader({ subscription }: { subscription: Subscription }) {
             {subscription.category}
           </p>
         </div>
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
-            subscription.status === "active"
-              ? "bg-secondary/10 text-secondary"
-              : subscription.status === "paused"
-                ? "bg-tertiary-container/20 text-tertiary"
-                : "bg-error-container/30 text-error",
-          )}
-        >
-          {subscription.status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium",
+              subscription.status === "active"
+                ? "bg-secondary/10 text-secondary"
+                : subscription.status === "paused"
+                  ? "bg-tertiary-container/20 text-tertiary"
+                  : "bg-error-container/30 text-error"
+            )}
+          >
+            {subscription.status}
+          </span>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-surface-container-high"
+            title="Edit subscription"
+          >
+            <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
+              edit
+            </span>
+          </button>
+        </div>
       </div>
 
       <div className="mt-5 grid grid-cols-3 gap-4">
@@ -151,7 +232,7 @@ function InvoiceSection({ subscription }: { subscription: Subscription }) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { data: invoices = [] } = useQuery(
-    subscriptionInvoicesQueryOptions(subscription.id),
+    subscriptionInvoicesQueryOptions(subscription.id)
   );
   const [showForm, setShowForm] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -283,7 +364,7 @@ function AddInvoiceForm({
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to save invoice. Try again.",
+          : "Failed to save invoice. Try again."
       );
     }
   };
@@ -351,7 +432,7 @@ function AddInvoiceForm({
                 "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
                 status === s
                   ? "bg-primary text-on-primary"
-                  : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high",
+                  : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
               )}
             >
               {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -452,7 +533,7 @@ function InvoiceRow({
             "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
             invoice.status === "paid"
               ? "bg-secondary/10 text-secondary"
-              : "bg-tertiary-container/20 text-tertiary",
+              : "bg-tertiary-container/20 text-tertiary"
           )}
         >
           {invoice.status}

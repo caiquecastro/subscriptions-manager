@@ -128,13 +128,15 @@ function AddEntry() {
             "flex flex-col items-center gap-3 rounded-xl p-6 transition-all",
             entryType === "subscription"
               ? "bg-primary/10 ring-2 ring-primary"
-              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low",
+              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low"
           )}
         >
           <span
             className={cn(
               "material-symbols-outlined text-[28px]",
-              entryType === "subscription" ? "text-primary" : "text-on-surface-variant",
+              entryType === "subscription"
+                ? "text-primary"
+                : "text-on-surface-variant"
             )}
           >
             card_membership
@@ -142,7 +144,7 @@ function AddEntry() {
           <span
             className={cn(
               "text-sm font-semibold",
-              entryType === "subscription" ? "text-primary" : "text-on-surface",
+              entryType === "subscription" ? "text-primary" : "text-on-surface"
             )}
           >
             Subscription
@@ -155,13 +157,15 @@ function AddEntry() {
             "flex flex-col items-center gap-3 rounded-xl p-6 transition-all",
             entryType === "balance"
               ? "bg-primary/10 ring-2 ring-primary"
-              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low",
+              : "bg-surface-container-lowest ambient-shadow hover:bg-surface-container-low"
           )}
         >
           <span
             className={cn(
               "material-symbols-outlined text-[28px]",
-              entryType === "balance" ? "text-primary" : "text-on-surface-variant",
+              entryType === "balance"
+                ? "text-primary"
+                : "text-on-surface-variant"
             )}
           >
             account_balance
@@ -169,7 +173,7 @@ function AddEntry() {
           <span
             className={cn(
               "text-sm font-semibold",
-              entryType === "balance" ? "text-primary" : "text-on-surface",
+              entryType === "balance" ? "text-primary" : "text-on-surface"
             )}
           >
             Balance
@@ -237,9 +241,7 @@ function AddEntry() {
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
-              {entryType === "subscription"
-                ? getCurrencySymbol(currency)
-                : "$"}
+              {entryType === "subscription" ? getCurrencySymbol(currency) : "$"}
             </span>
             <input
               id="entry-cost"
@@ -273,7 +275,7 @@ function AddEntry() {
                       "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
                       currency === cur
                         ? "bg-primary text-on-primary"
-                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high",
+                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
                     )}
                   >
                     {getCurrencySymbol(cur)} {cur}
@@ -328,7 +330,7 @@ function AddEntry() {
                       "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
                       billingCycle === cycle
                         ? "bg-primary text-on-primary"
-                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high",
+                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
                     )}
                   >
                     {cycle.charAt(0).toUpperCase() + cycle.slice(1)}

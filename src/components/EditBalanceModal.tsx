@@ -101,7 +101,7 @@ export function EditBalanceModal({
                     disabled={saving}
                     className={cn(
                       "w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30",
-                      type !== "Reward Points" && "pl-8",
+                      type !== "Reward Points" && "pl-8"
                     )}
                   />
                 </div>

@@ -69,7 +69,7 @@ export interface Invoice {
 
 export function getUserCollectionPath(
   uid: string,
-  collectionName: "subscriptions" | "balances" | "invoices",
+  collectionName: "subscriptions" | "balances" | "invoices"
 ) {
   return `users/${uid}/${collectionName}`;
 }
@@ -121,7 +121,7 @@ export async function updateSubscription(
   return withTimeout(
     updateDoc(
       doc(db, getUserCollectionPath(user.uid, "subscriptions"), id),
-      data
+      stripUndefined(data)
     )
   );
 }
@@ -169,28 +169,21 @@ export async function deleteBalance(id: string) {
 }
 
 // Invoices
-export async function getInvoices(
-  subscriptionId?: string,
-): Promise<Invoice[]> {
+export async function getInvoices(subscriptionId?: string): Promise<Invoice[]> {
   const user = requireCurrentUser();
-  const colRef = collection(
-    db,
-    getUserCollectionPath(user.uid, "invoices"),
-  );
+  const colRef = collection(db, getUserCollectionPath(user.uid, "invoices"));
   const q = subscriptionId
     ? query(
         colRef,
         where("subscriptionId", "==", subscriptionId),
-        orderBy("date", "desc"),
+        orderBy("date", "desc")
       )
     : query(colRef, orderBy("date", "desc"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Invoice);
 }
 
-export async function addInvoice(
-  invoice: Omit<Invoice, "id" | "createdAt">,
-) {
+export async function addInvoice(invoice: Omit<Invoice, "id" | "createdAt">) {
   const user = requireCurrentUser();
   return withTimeout(
     addDoc(
@@ -198,34 +191,31 @@ export async function addInvoice(
       stripUndefined({
         ...invoice,
         createdAt: new Date().toISOString(),
-      }),
-    ),
+      })
+    )
   );
 }
 
 export async function updateInvoice(id: string, data: Partial<Invoice>) {
   const user = requireCurrentUser();
   return withTimeout(
-    updateDoc(
-      doc(db, getUserCollectionPath(user.uid, "invoices"), id),
-      data,
-    ),
+    updateDoc(doc(db, getUserCollectionPath(user.uid, "invoices"), id), data)
   );
 }
 
 export async function deleteInvoice(id: string) {
   const user = requireCurrentUser();
   return withTimeout(
-    deleteDoc(doc(db, getUserCollectionPath(user.uid, "invoices"), id)),
+    deleteDoc(doc(db, getUserCollectionPath(user.uid, "invoices"), id))
   );
 }
 
 export async function getSubscription(
-  id: string,
+  id: string
 ): Promise<Subscription | null> {
   const user = requireCurrentUser();
   const q = query(
-    collection(db, getUserCollectionPath(user.uid, "subscriptions")),
+    collection(db, getUserCollectionPath(user.uid, "subscriptions"))
   );
   const snapshot = await getDocs(q);
   const d = snapshot.docs.find((d) => d.id === id);

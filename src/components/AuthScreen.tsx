@@ -90,7 +90,6 @@ export default function AuthScreen() {
                 <p className="mt-1">{error}</p>
               </div>
             )}
-
           </div>
         </section>
       </div>

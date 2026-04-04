@@ -12,7 +12,7 @@ export const DEFAULT_CURRENCY: Currency = "BRL";
 
 export function formatCurrency(
   amount: number,
-  currency: Currency = DEFAULT_CURRENCY,
+  currency: Currency = DEFAULT_CURRENCY
 ): string {
   const resolved = currencyConfig[currency] ? currency : DEFAULT_CURRENCY;
   const { locale } = currencyConfig[resolved];
@@ -23,7 +23,9 @@ export function formatCurrency(
 }
 
 export function getCurrencySymbol(
-  currency: Currency = DEFAULT_CURRENCY,
+  currency: Currency = DEFAULT_CURRENCY
 ): string {
-  return currencyConfig[currency]?.symbol ?? currencyConfig[DEFAULT_CURRENCY].symbol;
+  return (
+    currencyConfig[currency]?.symbol ?? currencyConfig[DEFAULT_CURRENCY].symbol
+  );
 }
