@@ -17,7 +17,7 @@ export default function AuthScreen() {
   return (
     <div className="min-h-screen bg-surface px-4 py-8">
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center">
-        <section className="grid w-full gap-8 rounded-[32px] bg-surface-container-lowest p-8 ambient-shadow lg:grid-cols-[1.15fr_0.85fr] lg:p-12">
+        <section className="grid w-full gap-8 rounded-4xl bg-surface-container-lowest p-8 ambient-shadow lg:grid-cols-[1.15fr_0.85fr] lg:p-12">
           <div className="space-y-6">
             <div className="inline-flex items-center gap-3 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
               <span className="material-symbols-outlined text-[18px]">

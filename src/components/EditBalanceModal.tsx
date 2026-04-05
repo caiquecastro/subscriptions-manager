@@ -35,7 +35,7 @@ export function EditBalanceModal({
       onClose();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to save. Try again."
+        err instanceof Error ? err.message : "Failed to save. Try again.",
       );
       throw err;
     }
@@ -44,8 +44,8 @@ export function EditBalanceModal({
   return (
     <Dialog.Root open onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-[60] bg-black/50" />
-        <Dialog.Popup className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <Dialog.Backdrop className="fixed inset-0 z-60 bg-black/50" />
+        <Dialog.Popup className="fixed inset-0 z-60 flex items-center justify-center p-4">
           <div className="w-full max-w-md rounded-2xl bg-surface-container-lowest p-6 shadow-xl">
             <div className="flex items-center justify-between">
               <Dialog.Title className="font-headline text-lg font-semibold text-on-surface">
