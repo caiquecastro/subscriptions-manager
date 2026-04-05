@@ -3,7 +3,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Balance, updateBalance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
-import { BalanceForm, balanceToFormValues, type BalanceFormValues } from "./BalanceForm";
+import {
+  BalanceForm,
+  balanceToFormValues,
+  type BalanceFormValues,
+} from "./BalanceForm";
 
 export function EditBalanceModal({
   balance,

@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import type { Balance } from "../lib/firebase";
 import { BALANCE_TYPES } from "./BalanceCard";
+import { Input, Label, Select, Textarea } from "./FormField";
 
 export interface BalanceFormValues {
   name: string;
@@ -64,19 +65,13 @@ export function BalanceForm({
       <form.Field name="name">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Account Name
-            </label>
-            <input
+            <Label htmlFor={field.name}>Account Name</Label>
+            <Input
               id={field.name}
               type="text"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="e.g., Apple ID, Amazon..."
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}
@@ -88,19 +83,16 @@ export function BalanceForm({
           <form.Subscribe selector={(s) => s.values.type}>
             {(type) => (
               <div>
-                <label
-                  htmlFor={field.name}
-                  className="mb-1.5 block text-sm font-medium text-on-surface"
-                >
+                <Label htmlFor={field.name}>
                   {type === "Reward Points" ? "Points" : "Amount"}
-                </label>
+                </Label>
                 <div className="relative">
                   {type !== "Reward Points" && (
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
                       $
                     </span>
                   )}
-                  <input
+                  <Input
                     id={field.name}
                     type="number"
                     value={field.state.value}
@@ -109,9 +101,7 @@ export function BalanceForm({
                     step="0.01"
                     min="0"
                     className={
-                      type !== "Reward Points"
-                        ? "w-full rounded-lg bg-surface-variant py-3 pl-8 pr-4 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
-                        : "w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
+                      type !== "Reward Points" ? "py-3 pl-8 pr-4" : undefined
                     }
                   />
                 </div>
@@ -125,17 +115,11 @@ export function BalanceForm({
       <form.Field name="type">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Balance Type
-            </label>
-            <select
+            <Label htmlFor={field.name}>Balance Type</Label>
+            <Select
               id={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             >
               <option value="">Select type...</option>
               {BALANCE_TYPES.map((t) => (
@@ -143,7 +127,7 @@ export function BalanceForm({
                   {t}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
       </form.Field>
@@ -152,18 +136,12 @@ export function BalanceForm({
       <form.Field name="expiresAt">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Expiration Date (optional)
-            </label>
-            <input
+            <Label htmlFor={field.name}>Expiration Date (optional)</Label>
+            <Input
               id={field.name}
               type="date"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}
@@ -173,19 +151,13 @@ export function BalanceForm({
       <form.Field name="notes">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Notes (optional)
-            </label>
-            <textarea
+            <Label htmlFor={field.name}>Notes (optional)</Label>
+            <Textarea
               id={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Add any notes about this entry..."
               rows={3}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}

@@ -6,6 +6,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from "../lib/currency";
 import type { Subscription } from "../lib/firebase";
+import { Input, Label, Select, Textarea } from "./FormField";
 
 export interface SubscriptionFormValues {
   cost: string;
@@ -82,18 +83,12 @@ export function SubscriptionForm({
       <form.Field name="name">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Service Name
-            </label>
-            <input
+            <Label htmlFor={field.name}>Service Name</Label>
+            <Input
               id={field.name}
               type="text"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}
@@ -106,24 +101,19 @@ export function SubscriptionForm({
             <form.Subscribe selector={(s) => s.values.currency}>
               {(currency) => (
                 <div>
-                  <label
-                    htmlFor={field.name}
-                    className="mb-1.5 block text-sm font-medium text-on-surface"
-                  >
-                    Cost
-                  </label>
+                  <Label htmlFor={field.name}>Cost</Label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant">
                       {getCurrencySymbol(currency)}
                     </span>
-                    <input
+                    <Input
                       id={field.name}
                       type="number"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder="0.00"
                       step="0.01"
-                      className="w-full rounded-lg bg-surface-variant py-3 pl-8 pr-4 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
+                      className="py-3 pl-8 pr-4"
                     />
                   </div>
                 </div>
@@ -164,17 +154,11 @@ export function SubscriptionForm({
       <form.Field name="category">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Category
-            </label>
-            <select
+            <Label htmlFor={field.name}>Category</Label>
+            <Select
               id={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             >
               <option value="">Select category...</option>
               {CATEGORIES.map((cat) => (
@@ -182,7 +166,7 @@ export function SubscriptionForm({
                   {cat}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
       </form.Field>
@@ -219,18 +203,12 @@ export function SubscriptionForm({
       <form.Field name="nextRenewal">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Next Renewal Date
-            </label>
-            <input
+            <Label htmlFor={field.name}>Next Renewal Date</Label>
+            <Input
               id={field.name}
               type="date"
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}
@@ -266,19 +244,13 @@ export function SubscriptionForm({
       <form.Field name="notes">
         {(field) => (
           <div>
-            <label
-              htmlFor={field.name}
-              className="mb-1.5 block text-sm font-medium text-on-surface"
-            >
-              Notes (optional)
-            </label>
-            <textarea
+            <Label htmlFor={field.name}>Notes (optional)</Label>
+            <Textarea
               id={field.name}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Add any notes..."
               rows={3}
-              className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             />
           </div>
         )}
