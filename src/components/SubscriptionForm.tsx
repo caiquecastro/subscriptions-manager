@@ -112,7 +112,7 @@ export function SubscriptionForm({
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder="0.00"
                       step="0.01"
-                      className="py-3 pl-8 pr-4"
+                      className="py-3 pl-10 pr-4"
                     />
                   </div>
                 </div>
