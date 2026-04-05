@@ -26,6 +26,11 @@ export const balancesQueryOptions = queryOptions({
   queryFn: getBalances,
 });
 
+export const invoicesQueryOptions = queryOptions({
+  queryKey: ["invoices"],
+  queryFn: () => getInvoices(),
+});
+
 export function subscriptionInvoicesQueryOptions(subscriptionId: string) {
   return queryOptions({
     queryKey: ["invoices", subscriptionId],
