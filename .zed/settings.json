@@ -1,10 +1,5 @@
 {
-  "formatter": {
-    "external": {
-      "command": "node_modules/.bin/biome",
-      "arguments": ["format", "--write", "--stdin-file-path", "{buffer_path}"]
-    }
-  },
+  "formatter": "language_server",
   "format_on_save": "on",
   "code_actions_on_format": {
     "source.fixAll.biome": true,
