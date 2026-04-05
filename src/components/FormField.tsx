@@ -6,6 +6,7 @@ export function Label({
   ...props
 }: ComponentPropsWithoutRef<"label">) {
   return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: wrapper component, control is provided by consumers
     <label
       className={cn(
         "mb-1.5 block text-sm font-medium text-on-surface",
