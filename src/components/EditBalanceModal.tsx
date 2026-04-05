@@ -35,7 +35,7 @@ export function EditBalanceModal({
       onClose();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to save. Try again.",
+        err instanceof Error ? err.message : "Failed to save. Try again."
       );
       throw err;
     }
