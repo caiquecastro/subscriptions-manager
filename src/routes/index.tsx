@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { formatCurrency } from "../lib/currency";
+import { formatShortMonthDay } from "../lib/date";
 import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
@@ -137,11 +138,7 @@ function Dashboard() {
                   {sub.name}
                 </p>
                 <p className="text-xs text-on-surface-variant">
-                  Renews{" "}
-                  {new Date(sub.nextRenewal).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  Renews {formatShortMonthDay(sub.nextRenewal)}
                 </p>
               </div>
               <p className="text-sm font-bold text-on-surface">

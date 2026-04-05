@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
+import { formatInvoiceDate, formatInvoiceDateLong } from "../lib/date";
 import { invoiceQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 
 export const Route = createFileRoute("/invoices_/$id")({
@@ -68,11 +69,7 @@ function InvoiceDetail() {
           </div>
           <div className="flex-1">
             <h1 className="font-headline text-2xl font-bold text-on-surface">
-              {new Date(invoice.date).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-              })}
+              {formatInvoiceDateLong(invoice.date)}
             </h1>
             {subscription && (
               <p className="text-sm text-on-surface-variant">
@@ -106,11 +103,7 @@ function InvoiceDetail() {
               Recorded On
             </p>
             <p className="font-headline mt-1 text-xl font-bold text-on-surface">
-              {new Date(invoice.createdAt).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
+              {formatInvoiceDate(invoice.createdAt)}
             </p>
           </div>
         </div>

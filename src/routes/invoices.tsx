@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
+import { formatInvoiceDate } from "../lib/date";
 import { invoicesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
 
 export const Route = createFileRoute("/invoices")({
@@ -147,11 +148,7 @@ function Invoices() {
                         params={{ id: invoice.id }}
                         className="block font-medium text-on-surface"
                       >
-                        {new Date(invoice.date).toLocaleDateString("pt-BR", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {formatInvoiceDate(invoice.date)}
                       </Link>
                     </td>
                     <td className="px-5 py-4">
@@ -244,11 +241,7 @@ function Invoices() {
                       {subscription?.name ?? "Unknown subscription"}
                     </p>
                     <p className="text-xs text-on-surface-variant">
-                      {new Date(invoice.date).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
+                      {formatInvoiceDate(invoice.date)}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1">

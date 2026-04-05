@@ -1,3 +1,4 @@
+import { formatShortMonthDayYear } from "../lib/date";
 import type { Balance } from "../lib/firebase";
 
 export const BALANCE_TYPES = [
@@ -48,12 +49,7 @@ export function BalanceCard({
       </p>
       {balance.expiresAt && (
         <p className="mt-1.5 text-xs text-tertiary">
-          Expires{" "}
-          {new Date(balance.expiresAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
+          Expires {formatShortMonthDayYear(balance.expiresAt)}
         </p>
       )}
     </div>

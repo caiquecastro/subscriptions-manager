@@ -9,7 +9,11 @@ import {
 import { useAuth } from "../lib/auth";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
-import { getDaysUntilRenewal } from "../lib/date";
+import {
+  formatInvoiceDate,
+  formatShortMonthDay,
+  getDaysUntilRenewal,
+} from "../lib/date";
 import {
   addInvoice,
   deleteInvoice,
@@ -199,10 +203,7 @@ function SubscriptionHeader({ subscription }: { subscription: Subscription }) {
             Next Renewal
           </p>
           <p className="font-headline mt-1 text-xl font-bold text-on-surface">
-            {new Date(subscription.nextRenewal).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}
+            {formatShortMonthDay(subscription.nextRenewal)}
           </p>
           <p className="text-xs text-on-surface-variant">
             {daysUntil <= 0 ? "Due today" : `in ${daysUntil} days`}
@@ -522,11 +523,7 @@ function InvoiceRow({
         </div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-on-surface">
-            {new Date(invoice.date).toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
+            {formatInvoiceDate(invoice.date)}
           </p>
           {invoice.notes && (
             <p className="text-xs text-on-surface-variant">{invoice.notes}</p>
