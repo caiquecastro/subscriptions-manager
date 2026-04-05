@@ -22,6 +22,9 @@ interface SubscriptionFormProps {
   defaultValues: SubscriptionFormValues;
   onSubmit: (values: SubscriptionFormValues) => Promise<void>;
   onCancel: () => void;
+  submitLabel?: string;
+  cancelLabel?: string;
+  error?: string;
 }
 
 const CATEGORIES = [
@@ -56,6 +59,9 @@ export function SubscriptionForm({
   defaultValues,
   onSubmit,
   onCancel,
+  submitLabel = "Save Changes",
+  cancelLabel = "Cancel",
+  error,
 }: SubscriptionFormProps) {
   const form = useForm({
     defaultValues,
@@ -170,6 +176,7 @@ export function SubscriptionForm({
               onChange={(e) => field.handleChange(e.target.value)}
               className="w-full rounded-lg bg-surface-variant px-4 py-3 text-sm text-on-surface outline-none transition-colors focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/30"
             >
+              <option value="">Select category...</option>
               {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
@@ -277,6 +284,15 @@ export function SubscriptionForm({
         )}
       </form.Field>
 
+      {error && (
+        <div className="flex items-start gap-3 rounded-xl bg-error-container/30 p-3">
+          <span className="material-symbols-outlined text-[18px] text-error">
+            error
+          </span>
+          <p className="text-sm text-on-error-container">{error}</p>
+        </div>
+      )}
+
       {/* Actions */}
       <form.Subscribe selector={(s) => ({ isSubmitting: s.isSubmitting })}>
         {({ isSubmitting }) => (
@@ -287,14 +303,14 @@ export function SubscriptionForm({
               disabled={isSubmitting}
               className="rounded-xl px-5 py-2.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container-high disabled:opacity-50"
             >
-              Cancel
+              {cancelLabel}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
               className="signature-gradient rounded-xl px-6 py-2.5 text-sm font-semibold text-on-primary shadow-lg transition-transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
             >
-              {isSubmitting ? "Saving..." : "Save Changes"}
+              {isSubmitting ? "Saving..." : submitLabel}
             </button>
           </div>
         )}
