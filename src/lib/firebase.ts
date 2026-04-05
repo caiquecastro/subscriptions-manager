@@ -157,7 +157,10 @@ export async function addBalance(bal: Omit<Balance, "id" | "createdAt">) {
 export async function updateBalance(id: string, data: Partial<Balance>) {
   const user = requireCurrentUser();
   return withTimeout(
-    updateDoc(doc(db, getUserCollectionPath(user.uid, "balances"), id), data)
+    updateDoc(
+      doc(db, getUserCollectionPath(user.uid, "balances"), id),
+      stripUndefined(data as Record<string, unknown>)
+    )
   );
 }
 
