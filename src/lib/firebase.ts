@@ -3,6 +3,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -184,6 +185,16 @@ export async function getInvoices(subscriptionId?: string): Promise<Invoice[]> {
     : query(colRef, orderBy("date", "desc"));
   const snapshot = await getDocs(q);
   return snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Invoice);
+}
+
+export async function getInvoice(id: string): Promise<Invoice | null> {
+  const user = requireCurrentUser();
+  const snapshot = await getDoc(
+    doc(db, getUserCollectionPath(user.uid, "invoices"), id)
+  );
+  return snapshot.exists()
+    ? ({ id: snapshot.id, ...snapshot.data() } as Invoice)
+    : null;
 }
 
 export async function addInvoice(invoice: Omit<Invoice, "id" | "createdAt">) {

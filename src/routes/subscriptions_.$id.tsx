@@ -509,24 +509,30 @@ function InvoiceRow({
   isDeleting: boolean;
 }) {
   return (
-    <div className="group flex items-center gap-4 rounded-lg bg-surface-container-low p-4">
-      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/8">
-        <span className="material-symbols-outlined text-[20px] text-primary">
-          receipt
-        </span>
-      </div>
-      <div className="flex-1">
-        <p className="text-sm font-semibold text-on-surface">
-          {new Date(invoice.date).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })}
-        </p>
-        {invoice.notes && (
-          <p className="text-xs text-on-surface-variant">{invoice.notes}</p>
-        )}
-      </div>
+    <div className="group flex items-center gap-4 rounded-lg bg-surface-container-low p-4 transition-colors hover:bg-surface-container">
+      <Link
+        to="/invoices/$id"
+        params={{ id: invoice.id }}
+        className="flex flex-1 items-center gap-4"
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/8">
+          <span className="material-symbols-outlined text-[20px] text-primary">
+            receipt
+          </span>
+        </div>
+        <div className="flex-1">
+          <p className="text-sm font-semibold text-on-surface">
+            {new Date(invoice.date).toLocaleDateString("pt-BR", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </p>
+          {invoice.notes && (
+            <p className="text-xs text-on-surface-variant">{invoice.notes}</p>
+          )}
+        </div>
+      </Link>
       <div className="flex items-center gap-3">
         <span
           className={cn(
