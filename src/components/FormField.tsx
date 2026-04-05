@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { cn } from "../lib/cn";
 
 export function Label({
@@ -58,5 +58,44 @@ export function Textarea({
       )}
       {...props}
     />
+  );
+}
+
+interface SegmentedControlProps<T extends string> {
+  label: string;
+  options: readonly T[];
+  value: T;
+  onChange: (value: T) => void;
+  getLabel?: (option: T) => ReactNode;
+}
+
+export function SegmentedControl<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+  getLabel = (o) => o.charAt(0).toUpperCase() + o.slice(1),
+}: SegmentedControlProps<T>) {
+  return (
+    <div>
+      <p className="mb-1.5 text-sm font-medium text-on-surface">{label}</p>
+      <div className="flex gap-2">
+        {options.map((option) => (
+          <button
+            type="button"
+            key={option}
+            onClick={() => onChange(option)}
+            className={cn(
+              "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
+              value === option
+                ? "bg-primary text-on-primary"
+                : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
+            )}
+          >
+            {getLabel(option)}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

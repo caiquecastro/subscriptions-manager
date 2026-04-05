@@ -1,12 +1,11 @@
 import { useForm } from "@tanstack/react-form";
-import { cn } from "../lib/cn";
 import {
   type Currency,
   getCurrencySymbol,
   SUPPORTED_CURRENCIES,
 } from "../lib/currency";
 import type { Subscription } from "../lib/firebase";
-import { Input, Label, Select, Textarea } from "./FormField";
+import { Input, Label, SegmentedControl, Select, Textarea } from "./FormField";
 
 export interface SubscriptionFormValues {
   cost: string;
@@ -124,28 +123,13 @@ export function SubscriptionForm({
 
         <form.Field name="currency">
           {(field) => (
-            <div>
-              <p className="mb-1.5 text-sm font-medium text-on-surface">
-                Currency
-              </p>
-              <div className="flex gap-2">
-                {SUPPORTED_CURRENCIES.map((cur) => (
-                  <button
-                    type="button"
-                    key={cur}
-                    onClick={() => field.handleChange(cur)}
-                    className={cn(
-                      "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
-                      field.state.value === cur
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
-                    )}
-                  >
-                    {getCurrencySymbol(cur)} {cur}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <SegmentedControl
+              label="Currency"
+              options={SUPPORTED_CURRENCIES}
+              value={field.state.value}
+              onChange={field.handleChange}
+              getLabel={(cur) => `${getCurrencySymbol(cur)} ${cur}`}
+            />
           )}
         </form.Field>
       </div>
@@ -174,28 +158,12 @@ export function SubscriptionForm({
       {/* Billing Cycle */}
       <form.Field name="billingCycle">
         {(field) => (
-          <div>
-            <p className="mb-1.5 text-sm font-medium text-on-surface">
-              Billing Cycle
-            </p>
-            <div className="flex gap-2">
-              {(["monthly", "yearly", "quarterly"] as const).map((cycle) => (
-                <button
-                  type="button"
-                  key={cycle}
-                  onClick={() => field.handleChange(cycle)}
-                  className={cn(
-                    "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
-                    field.state.value === cycle
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
-                  )}
-                >
-                  {cycle.charAt(0).toUpperCase() + cycle.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SegmentedControl
+            label="Billing Cycle"
+            options={["monthly", "yearly", "quarterly"] as const}
+            value={field.state.value}
+            onChange={field.handleChange}
+          />
         )}
       </form.Field>
 
@@ -217,26 +185,12 @@ export function SubscriptionForm({
       {/* Status */}
       <form.Field name="status">
         {(field) => (
-          <div>
-            <p className="mb-1.5 text-sm font-medium text-on-surface">Status</p>
-            <div className="flex gap-2">
-              {(["active", "paused", "cancelled"] as const).map((s) => (
-                <button
-                  type="button"
-                  key={s}
-                  onClick={() => field.handleChange(s)}
-                  className={cn(
-                    "flex-1 rounded-lg py-2.5 text-sm font-medium transition-colors",
-                    field.state.value === s
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface-variant text-on-surface-variant hover:bg-surface-container-high"
-                  )}
-                >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
+          <SegmentedControl
+            label="Status"
+            options={["active", "paused", "cancelled"] as const}
+            value={field.state.value}
+            onChange={field.handleChange}
+          />
         )}
       </form.Field>
 
