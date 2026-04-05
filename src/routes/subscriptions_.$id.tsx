@@ -1,6 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import {
+  SubscriptionForm,
+  type SubscriptionFormValues,
+  subscriptionToFormValues,
+} from "../components/SubscriptionForm";
+import { useAuth } from "../lib/auth";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
 import { getDaysUntilRenewal } from "../lib/date";
@@ -16,12 +22,6 @@ import {
   subscriptionsQueryOptions,
 } from "../lib/query";
 import { uploadInvoiceFile } from "../lib/storage";
-import { useAuth } from "../lib/auth";
-import {
-  SubscriptionForm,
-  subscriptionToFormValues,
-  type SubscriptionFormValues,
-} from "../components/SubscriptionForm";
 
 export const Route = createFileRoute("/subscriptions_/$id")({
   component: SubscriptionDetail,

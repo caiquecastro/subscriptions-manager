@@ -5,8 +5,8 @@ import { type Balance, updateBalance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
 import {
   BalanceForm,
-  balanceToFormValues,
   type BalanceFormValues,
+  balanceToFormValues,
 } from "./BalanceForm";
 
 export function EditBalanceModal({
