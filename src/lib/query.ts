@@ -1,4 +1,5 @@
 import { QueryClient, queryOptions } from "@tanstack/react-query";
+import { getExchangeRates } from "./exchange-rates";
 import {
   getBalances,
   getInvoice,
@@ -44,3 +45,10 @@ export function invoiceQueryOptions(id: string) {
     queryFn: () => getInvoice(id),
   });
 }
+
+export const exchangeRatesQueryOptions = queryOptions({
+  queryKey: ["exchange-rates"],
+  queryFn: getExchangeRates,
+  staleTime: 1000 * 60 * 60,
+  gcTime: Number.POSITIVE_INFINITY,
+});

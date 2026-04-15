@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { BalanceCard, formatBalanceAmount } from "../components/BalanceCard";
 import { EditBalanceModal } from "../components/EditBalanceModal";
+import { formatCurrency } from "../lib/currency";
 import type { Balance } from "../lib/firebase";
 import { balancesQueryOptions } from "../lib/query";
 
@@ -57,7 +58,7 @@ function Balances() {
           Total Estimated Balance
         </p>
         <h2 className="font-headline mt-1 text-4xl font-bold tracking-tight text-on-surface lg:text-5xl">
-          ${totalBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          {formatCurrency(totalBalance, "USD")}
         </h2>
         {totalPoints > 0 && (
           <p className="mt-2 text-sm text-on-surface-variant">

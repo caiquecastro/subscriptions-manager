@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { formatCurrency } from "../lib/currency";
-import { balancesQueryOptions, subscriptionsQueryOptions } from "../lib/query";
+import { DEFAULT_CURRENCY, formatCurrency } from "../lib/currency";
+import { convert } from "../lib/exchange-rates";
+import {
+  balancesQueryOptions,
+  exchangeRatesQueryOptions,
+  subscriptionsQueryOptions,
+} from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
 export const Route = createFileRoute("/analytics")({ component: Analytics });
@@ -9,17 +14,32 @@ export const Route = createFileRoute("/analytics")({ component: Analytics });
 function Analytics() {
   const { data: subscriptions = [] } = useQuery(subscriptionsQueryOptions);
   const { data: balances = [] } = useQuery(balancesQueryOptions);
+  const { data: rates } = useQuery(exchangeRatesQueryOptions);
+
+  const displayCurrency = DEFAULT_CURRENCY;
 
   const totalMonthly = subscriptions
     .filter((s) => s.status === "active")
-    .reduce((sum, s) => sum + getMonthlySubscriptionCost(s), 0);
+    .reduce((sum, s) => {
+      const monthlyCost = getMonthlySubscriptionCost(s);
+      return (
+        sum +
+        (rates
+          ? convert(monthlyCost, s.currency ?? "USD", displayCurrency, rates)
+          : monthlyCost)
+      );
+    }, 0);
 
   const totalYearly = totalMonthly * 12;
 
   const categoryBreakdown = subscriptions.reduce(
     (acc, s) => {
       if (s.status !== "active") return acc;
-      acc[s.category] = (acc[s.category] || 0) + getMonthlySubscriptionCost(s);
+      const monthlyCost = getMonthlySubscriptionCost(s);
+      const converted = rates
+        ? convert(monthlyCost, s.currency ?? "USD", displayCurrency, rates)
+        : monthlyCost;
+      acc[s.category] = (acc[s.category] || 0) + converted;
       return acc;
     },
     {} as Record<string, number>
@@ -53,7 +73,7 @@ function Analytics() {
             Monthly Spend
           </p>
           <p className="font-headline mt-1 text-2xl font-bold text-on-surface">
-            ${totalMonthly.toFixed(2)}
+            {formatCurrency(totalMonthly, displayCurrency)}
           </p>
         </div>
         <div className="rounded-xl bg-surface-container-lowest p-5 ambient-shadow">
@@ -61,7 +81,7 @@ function Analytics() {
             Annual Projection
           </p>
           <p className="font-headline mt-1 text-2xl font-bold text-on-surface">
-            ${totalYearly.toFixed(2)}
+            {formatCurrency(totalYearly, displayCurrency)}
           </p>
         </div>
         <div className="rounded-xl bg-surface-container-lowest p-5 ambient-shadow">
@@ -77,7 +97,7 @@ function Analytics() {
             Stored Value
           </p>
           <p className="font-headline mt-1 text-2xl font-bold text-on-surface">
-            ${totalBalance.toFixed(2)}
+            {formatCurrency(totalBalance, "USD")}
           </p>
         </div>
       </div>
@@ -95,7 +115,7 @@ function Analytics() {
                   {category}
                 </span>
                 <span className="text-sm font-semibold text-on-surface">
-                  ${amount.toFixed(2)}/mo
+                  {formatCurrency(amount, displayCurrency)}/mo
                 </span>
               </div>
               <div className="mt-1.5 h-2 rounded-full bg-surface-container-high">

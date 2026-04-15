@@ -53,10 +53,7 @@ function Dashboard() {
               Portfolio Overview
             </p>
             <h1 className="font-headline mt-1 text-4xl font-bold tracking-tight text-on-surface lg:text-5xl">
-              $
-              {totalBalance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-              })}
+              {formatCurrency(totalBalance, "USD")}
             </h1>
             <div className="mt-2 flex items-center gap-2">
               <span className="flex items-center gap-1 rounded-full bg-secondary/10 px-2.5 py-1 text-xs font-semibold text-secondary">
@@ -180,7 +177,7 @@ function Dashboard() {
                 <p className="font-headline mt-2 text-lg font-bold text-on-surface">
                   {bal.type === "Reward Points"
                     ? `${bal.amount.toLocaleString()} pts`
-                    : `$${bal.amount.toFixed(2)}`}
+                    : formatCurrency(bal.amount, "USD")}
                 </p>
               </div>
             ))}
