@@ -13,7 +13,7 @@ const STALE_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 async function fetchRatesFromApi(): Promise<Record<string, number>> {
   const res = await fetch(
-    "https://api.exchangerate.host/latest?base=USD&symbols=BRL,EUR"
+    "https://api.frankfurter.app/latest?from=USD&to=BRL,EUR"
   );
   if (!res.ok) throw new Error("Failed to fetch exchange rates");
   const data = await res.json();
