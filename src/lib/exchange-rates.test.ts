@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { convert } from "./exchange-rates";
 import type { ExchangeRates } from "./exchange-rates";
+import { convert } from "./exchange-rates";
 
 const rates: ExchangeRates = {
   base: "USD",

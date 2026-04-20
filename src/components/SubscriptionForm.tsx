@@ -1,10 +1,12 @@
 import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
 import {
   type Currency,
   getCurrencySymbol,
   SUPPORTED_CURRENCIES,
 } from "../lib/currency";
 import type { Subscription } from "../lib/firebase";
+import { suggestService } from "../lib/servicesSuggestion";
 import { Input, Label, SegmentedControl, Select, Textarea } from "./FormField";
 
 export interface SubscriptionFormValues {
@@ -64,6 +66,8 @@ export function SubscriptionForm({
   cancelLabel = "Cancel",
   error,
 }: SubscriptionFormProps) {
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
@@ -88,8 +92,28 @@ export function SubscriptionForm({
               id={field.name}
               type="text"
               value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
+              onChange={(e) => {
+                field.handleChange(e.target.value);
+                setSuggestion(null);
+              }}
+              onBlur={() => setSuggestion(suggestService(field.state.value))}
             />
+            {suggestion && (
+              <p className="mt-1.5 text-sm text-on-surface-variant">
+                Did you mean{" "}
+                <button
+                  type="button"
+                  className="font-medium text-primary underline underline-offset-2"
+                  onClick={() => {
+                    field.handleChange(suggestion);
+                    setSuggestion(null);
+                  }}
+                >
+                  {suggestion}
+                </button>
+                ?
+              </p>
+            )}
           </div>
         )}
       </form.Field>
