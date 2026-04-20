@@ -6,7 +6,10 @@ import {
   SUPPORTED_CURRENCIES,
 } from "../lib/currency";
 import type { Subscription } from "../lib/firebase";
-import { type ServiceSuggestion, suggestService } from "../lib/servicesSuggestion";
+import {
+  type ServiceSuggestion,
+  suggestService,
+} from "../lib/servicesSuggestion";
 import { Input, Label, SegmentedControl, Select, Textarea } from "./FormField";
 
 export interface SubscriptionFormValues {
