@@ -37,6 +37,7 @@ const CATEGORIES = [
   "Development",
   "Design",
   "Cloud Storage",
+  "Education",
   "Other",
 ];
 
