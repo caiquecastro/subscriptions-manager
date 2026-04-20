@@ -6,7 +6,7 @@ import {
   SUPPORTED_CURRENCIES,
 } from "../lib/currency";
 import type { Subscription } from "../lib/firebase";
-import { suggestService } from "../lib/servicesSuggestion";
+import { type ServiceSuggestion, suggestService } from "../lib/servicesSuggestion";
 import { Input, Label, SegmentedControl, Select, Textarea } from "./FormField";
 
 export interface SubscriptionFormValues {
@@ -66,7 +66,7 @@ export function SubscriptionForm({
   cancelLabel = "Cancel",
   error,
 }: SubscriptionFormProps) {
-  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<ServiceSuggestion | null>(null);
 
   const form = useForm({
     defaultValues,
@@ -105,11 +105,12 @@ export function SubscriptionForm({
                   type="button"
                   className="font-medium text-primary underline underline-offset-2"
                   onClick={() => {
-                    field.handleChange(suggestion);
+                    field.handleChange(suggestion.name);
+                    form.setFieldValue("category", suggestion.category);
                     setSuggestion(null);
                   }}
                 >
-                  {suggestion}
+                  {suggestion.name}
                 </button>
                 ?
               </p>

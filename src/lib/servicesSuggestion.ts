@@ -1,37 +1,47 @@
-const KNOWN_SERVICES = [
-  "Adobe Creative Cloud",
-  "Amazon Prime",
-  "Apple Arcade",
-  "Apple iCloud",
-  "Apple Music",
-  "Apple One",
-  "Apple TV+",
-  "Canva",
-  "ChatGPT",
-  "Claude",
-  "Cursor",
-  "Disney+",
-  "Dropbox",
-  "Duolingo",
-  "Figma",
-  "GitHub",
-  "Google Drive",
-  "Google One",
-  "HBO Max",
-  "Hulu",
-  "iCloud",
-  "Linear",
-  "LinkedIn Premium",
-  "Max",
-  "Microsoft 365",
-  "Netflix",
-  "Notion",
-  "Paramount+",
-  "Peacock",
-  "Slack",
-  "Spotify",
-  "YouTube Premium",
-  "Zoom",
+interface KnownService {
+  name: string;
+  category: string;
+}
+
+export interface ServiceSuggestion {
+  name: string;
+  category: string;
+}
+
+const KNOWN_SERVICES: KnownService[] = [
+  { name: "Adobe Creative Cloud", category: "Design" },
+  { name: "Amazon Prime", category: "Entertainment" },
+  { name: "Apple Arcade", category: "Entertainment" },
+  { name: "Apple iCloud", category: "Cloud Storage" },
+  { name: "Apple Music", category: "Entertainment" },
+  { name: "Apple One", category: "Entertainment" },
+  { name: "Apple TV+", category: "Entertainment" },
+  { name: "Canva", category: "Design" },
+  { name: "ChatGPT", category: "Productivity" },
+  { name: "Claude", category: "Productivity" },
+  { name: "Cursor", category: "Development" },
+  { name: "Disney+", category: "Entertainment" },
+  { name: "Dropbox", category: "Cloud Storage" },
+  { name: "Duolingo", category: "Education" },
+  { name: "Figma", category: "Design" },
+  { name: "GitHub", category: "Development" },
+  { name: "Google Drive", category: "Cloud Storage" },
+  { name: "Google One", category: "Cloud Storage" },
+  { name: "HBO Max", category: "Entertainment" },
+  { name: "Hulu", category: "Entertainment" },
+  { name: "iCloud", category: "Cloud Storage" },
+  { name: "Linear", category: "Productivity" },
+  { name: "LinkedIn Premium", category: "Professional" },
+  { name: "Max", category: "Entertainment" },
+  { name: "Microsoft 365", category: "Productivity" },
+  { name: "Netflix", category: "Entertainment" },
+  { name: "Notion", category: "Productivity" },
+  { name: "Paramount+", category: "Entertainment" },
+  { name: "Peacock", category: "Entertainment" },
+  { name: "Slack", category: "Productivity" },
+  { name: "Spotify", category: "Entertainment" },
+  { name: "YouTube Premium", category: "Entertainment" },
+  { name: "Zoom", category: "Productivity" },
 ];
 
 function levenshtein(a: string, b: string): number {
@@ -51,19 +61,19 @@ function levenshtein(a: string, b: string): number {
   return dp[m][n];
 }
 
-function wordPrefixes(service: string): string[] {
-  const words = service.split(" ");
+function wordPrefixes(name: string): string[] {
+  const words = name.split(" ");
   return words.map((_, i) => words.slice(0, i + 1).join(" "));
 }
 
-export function suggestService(input: string): string | null {
+export function suggestService(input: string): ServiceSuggestion | null {
   if (!input.trim()) return null;
   const lower = input.toLowerCase();
-  let best: string | null = null;
+  let best: KnownService | null = null;
   let bestScore = Infinity;
   for (const service of KNOWN_SERVICES) {
-    if (service.toLowerCase() === lower) return null;
-    const candidates = wordPrefixes(service);
+    if (service.name.toLowerCase() === lower) return null;
+    const candidates = wordPrefixes(service.name);
     const minDist = Math.min(
       ...candidates.map((c) => levenshtein(lower, c.toLowerCase()))
     );
@@ -73,5 +83,5 @@ export function suggestService(input: string): string | null {
       best = service;
     }
   }
-  return best;
+  return best ? { name: best.name, category: best.category } : null;
 }

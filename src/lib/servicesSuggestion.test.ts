@@ -13,22 +13,22 @@ describe("suggestService", () => {
     expect(suggestService("Spotify")).toBeNull();
   });
 
-  it("suggests on simple typo", () => {
-    expect(suggestService("Netflx")).toBe("Netflix");
-    expect(suggestService("Spotfy")).toBe("Spotify");
-    expect(suggestService("Diopbox")).toBe("Dropbox");
+  it("suggests name and category on simple typo", () => {
+    expect(suggestService("Netflx")).toEqual({ name: "Netflix", category: "Entertainment" });
+    expect(suggestService("Spotfy")).toEqual({ name: "Spotify", category: "Entertainment" });
+    expect(suggestService("Diopbox")).toEqual({ name: "Dropbox", category: "Cloud Storage" });
   });
 
   it("suggests when user types partial name with typo", () => {
-    expect(suggestService("Yotoube")).toBe("YouTube Premium");
-    expect(suggestService("Yutube")).toBe("YouTube Premium");
-    expect(suggestService("Linekdin")).toBe("LinkedIn Premium");
+    expect(suggestService("Yotoube")).toEqual({ name: "YouTube Premium", category: "Entertainment" });
+    expect(suggestService("Yutube")).toEqual({ name: "YouTube Premium", category: "Entertainment" });
+    expect(suggestService("Linekdin")).toEqual({ name: "LinkedIn Premium", category: "Professional" });
   });
 
   it("suggests when user types exact partial name", () => {
-    expect(suggestService("YouTube")).toBe("YouTube Premium");
-    expect(suggestService("LinkedIn")).toBe("LinkedIn Premium");
-    expect(suggestService("Microsoft")).toBe("Microsoft 365");
+    expect(suggestService("YouTube")).toEqual({ name: "YouTube Premium", category: "Entertainment" });
+    expect(suggestService("LinkedIn")).toEqual({ name: "LinkedIn Premium", category: "Professional" });
+    expect(suggestService("Microsoft")).toEqual({ name: "Microsoft 365", category: "Productivity" });
   });
 
   it("returns null for unrecognized input far from any service", () => {
