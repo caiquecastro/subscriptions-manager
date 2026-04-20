@@ -51,6 +51,11 @@ function levenshtein(a: string, b: string): number {
   return dp[m][n];
 }
 
+function wordPrefixes(service: string): string[] {
+  const words = service.split(" ");
+  return words.map((_, i) => words.slice(0, i + 1).join(" "));
+}
+
 export function suggestService(input: string): string | null {
   if (!input.trim()) return null;
   const lower = input.toLowerCase();
@@ -58,10 +63,13 @@ export function suggestService(input: string): string | null {
   let bestScore = Infinity;
   for (const service of KNOWN_SERVICES) {
     if (service.toLowerCase() === lower) return null;
-    const dist = levenshtein(lower, service.toLowerCase());
-    const threshold = Math.max(2, Math.floor(service.length * 0.3));
-    if (dist < bestScore && dist <= threshold) {
-      bestScore = dist;
+    const candidates = wordPrefixes(service);
+    const minDist = Math.min(
+      ...candidates.map((c) => levenshtein(lower, c.toLowerCase()))
+    );
+    const threshold = Math.max(2, Math.floor(lower.length * 0.4));
+    if (minDist < bestScore && minDist <= threshold) {
+      bestScore = minDist;
       best = service;
     }
   }
