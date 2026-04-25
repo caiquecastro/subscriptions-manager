@@ -6,7 +6,7 @@ description: Format commit messages with lowercase titles and detailed problem/s
 When the user asks you to commit code changes, follow these steps:
 
 1. Run `npm run check` scoped to the staged files to verify Biome formatting and linting passes. Get the list of staged files with `git diff --name-only --cached`. If the check fails, report the errors to the user and do not commit.
-2. Escalate permissions and then run `git add` and `git commit` in the same command, using this exact format:
+2. Run `git add` and `git commit` in the same command, using this exact format:
 
 ## Format structure
 
