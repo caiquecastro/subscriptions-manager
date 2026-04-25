@@ -14,7 +14,9 @@ function getAdminApp() {
   const credential = serviceAccount
     ? cert(JSON.parse(serviceAccount))
     : applicationDefault();
-  return initializeApp({ credential });
+  const projectId =
+    process.env.FIREBASE_PROJECT_ID ?? process.env.VITE_FIREBASE_PROJECT_ID;
+  return initializeApp({ credential, projectId });
 }
 
 async function fetchRates(): Promise<Record<string, number>> {
@@ -39,13 +41,9 @@ export const Route = createFileRoute("/api/cron/seed-exchange-rates")({
         }
 
         try {
-          console.log("getAdminApp")
           const app = getAdminApp();
-          console.log("getFirestore")
           const db = getFirestore(app);
-          console.log("fetchRates")
           const rates = await fetchRates();
-          console.log("update exchangeRates")
           await db.doc("exchangeRates/latest").set({
             base: "USD",
             rates,
