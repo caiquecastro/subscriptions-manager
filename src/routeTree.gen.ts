@@ -17,6 +17,7 @@ import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SubscriptionsIdRouteImport } from './routes/subscriptions_.$id'
 import { Route as InvoicesIdRouteImport } from './routes/invoices_.$id'
+import { Route as ApiCronSeedExchangeRatesRouteImport } from './routes/api/cron/seed-exchange-rates'
 
 const SubscriptionsRoute = SubscriptionsRouteImport.update({
   id: '/subscriptions',
@@ -58,6 +59,12 @@ const InvoicesIdRoute = InvoicesIdRouteImport.update({
   path: '/invoices/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCronSeedExchangeRatesRoute =
+  ApiCronSeedExchangeRatesRouteImport.update({
+    id: '/api/cron/seed-exchange-rates',
+    path: '/api/cron/seed-exchange-rates',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/subscriptions': typeof SubscriptionsRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/subscriptions/$id': typeof SubscriptionsIdRoute
+  '/api/cron/seed-exchange-rates': typeof ApiCronSeedExchangeRatesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +86,7 @@ export interface FileRoutesByTo {
   '/subscriptions': typeof SubscriptionsRoute
   '/invoices/$id': typeof InvoicesIdRoute
   '/subscriptions/$id': typeof SubscriptionsIdRoute
+  '/api/cron/seed-exchange-rates': typeof ApiCronSeedExchangeRatesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +98,7 @@ export interface FileRoutesById {
   '/subscriptions': typeof SubscriptionsRoute
   '/invoices_/$id': typeof InvoicesIdRoute
   '/subscriptions_/$id': typeof SubscriptionsIdRoute
+  '/api/cron/seed-exchange-rates': typeof ApiCronSeedExchangeRatesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +111,7 @@ export interface FileRouteTypes {
     | '/subscriptions'
     | '/invoices/$id'
     | '/subscriptions/$id'
+    | '/api/cron/seed-exchange-rates'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +122,7 @@ export interface FileRouteTypes {
     | '/subscriptions'
     | '/invoices/$id'
     | '/subscriptions/$id'
+    | '/api/cron/seed-exchange-rates'
   id:
     | '__root__'
     | '/'
@@ -121,6 +133,7 @@ export interface FileRouteTypes {
     | '/subscriptions'
     | '/invoices_/$id'
     | '/subscriptions_/$id'
+    | '/api/cron/seed-exchange-rates'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +145,7 @@ export interface RootRouteChildren {
   SubscriptionsRoute: typeof SubscriptionsRoute
   InvoicesIdRoute: typeof InvoicesIdRoute
   SubscriptionsIdRoute: typeof SubscriptionsIdRoute
+  ApiCronSeedExchangeRatesRoute: typeof ApiCronSeedExchangeRatesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/cron/seed-exchange-rates': {
+      id: '/api/cron/seed-exchange-rates'
+      path: '/api/cron/seed-exchange-rates'
+      fullPath: '/api/cron/seed-exchange-rates'
+      preLoaderRoute: typeof ApiCronSeedExchangeRatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +225,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionsRoute: SubscriptionsRoute,
   InvoicesIdRoute: InvoicesIdRoute,
   SubscriptionsIdRoute: SubscriptionsIdRoute,
+  ApiCronSeedExchangeRatesRoute: ApiCronSeedExchangeRatesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
