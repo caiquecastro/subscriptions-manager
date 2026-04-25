@@ -1,18 +1,19 @@
 import { readFile } from "node:fs/promises";
 import process from "node:process";
+import { parseArgs } from "node:util";
 import { applicationDefault, cert, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
-function getArg(name) {
-  const prefix = `--${name}=`;
-  const match = process.argv.slice(2).find((arg) => arg.startsWith(prefix));
-  return match ? match.slice(prefix.length) : null;
-}
+const { values: args } = parseArgs({
+  options: {
+    "service-account": { type: "string" },
+    project: { type: "string" },
+  },
+});
 
 async function getCredential() {
-  const serviceAccountPath = getArg("service-account");
-  if (serviceAccountPath) {
-    const raw = await readFile(serviceAccountPath, "utf8");
+  if (args["service-account"]) {
+    const raw = await readFile(args["service-account"], "utf8");
     return cert(JSON.parse(raw));
   }
   return applicationDefault();
@@ -28,7 +29,7 @@ async function fetchRates() {
 }
 
 async function main() {
-  const projectId = getArg("project") ?? "subscriptions-manager-f9cdb";
+  const projectId = args.project ?? "subscriptions-manager-f9cdb";
 
   initializeApp({ credential: await getCredential(), projectId });
 
