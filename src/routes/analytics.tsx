@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { DEFAULT_CURRENCY, formatCurrency } from "../lib/currency";
+import {
+  DEFAULT_CURRENCY,
+  formatCurrency,
+  SUPPORTED_CURRENCIES,
+} from "../lib/currency";
 import { convert } from "../lib/exchange-rates";
 import {
   balancesQueryOptions,
@@ -190,6 +194,42 @@ function Analytics() {
           </div>
         </section>
       </div>
+
+      {/* Exchange Rates */}
+      {rates && (
+        <section className="rounded-xl bg-surface-container-lowest p-6 ambient-shadow">
+          <div className="flex items-baseline justify-between">
+            <h2 className="font-headline text-lg font-semibold text-on-surface">
+              Exchange Rates
+            </h2>
+            <p className="text-xs text-on-surface-variant">
+              Updated{" "}
+              {new Intl.DateTimeFormat(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }).format(new Date(rates.updatedAt))}
+            </p>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {SUPPORTED_CURRENCIES.map((currency) => (
+              <div
+                key={currency}
+                className="rounded-lg bg-surface-container-high p-4"
+              >
+                <p className="text-xs font-medium text-on-surface-variant">
+                  1 {rates.base}
+                </p>
+                <p className="font-headline mt-1 text-xl font-bold text-on-surface">
+                  {formatCurrency(rates.rates[currency] ?? 1, currency)}
+                </p>
+                <p className="mt-0.5 text-xs text-on-surface-variant">
+                  {currency}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
