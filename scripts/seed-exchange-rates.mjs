@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import process from "node:process";
-import { cert, initializeApp, applicationDefault } from "firebase-admin/app";
+import { applicationDefault, cert, initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 function getArg(name) {
@@ -19,7 +19,9 @@ async function getCredential() {
 }
 
 async function fetchRates() {
-  const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=BRL,EUR");
+  const res = await fetch(
+    "https://api.frankfurter.app/latest?from=USD&to=BRL,EUR"
+  );
   if (!res.ok) throw new Error(`Frankfurter API error: ${res.status}`);
   const data = await res.json();
   return { USD: 1, ...data.rates };
