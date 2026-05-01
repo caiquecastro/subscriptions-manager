@@ -14,9 +14,10 @@ function getAdminApp() {
   const credential = serviceAccount
     ? cert(JSON.parse(serviceAccount))
     : applicationDefault();
-  const projectId =
-    process.env.FIREBASE_PROJECT_ID ?? process.env.VITE_FIREBASE_PROJECT_ID;
-  return initializeApp({ credential, projectId });
+  return initializeApp({
+    credential,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+  });
 }
 
 async function fetchRates(): Promise<Record<string, number>> {
