@@ -1,13 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { SubscriptionCard } from "../components/SubscriptionCard";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
-import {
-  compareDateStrings,
-  getDaysUntilRenewal,
-  isRenewalWithinDays,
-} from "../lib/date";
+import { compareDateStrings, isRenewalWithinDays } from "../lib/date";
 import { subscriptionsQueryOptions } from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
@@ -182,84 +179,9 @@ function Subscriptions() {
 
       {/* Subscription Grid */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {filtered.map((sub) => {
-          const daysUntil = getDaysUntilRenewal(sub);
-          return (
-            <Link
-              key={sub.id}
-              to="/subscriptions/$id"
-              params={{ id: sub.id }}
-              className="group block rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8">
-                    <span className="material-symbols-outlined text-[22px] text-primary">
-                      {sub.icon}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-on-surface">
-                      {sub.name}
-                    </p>
-                    <p className="text-xs text-on-surface-variant">
-                      {sub.category}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                  <button
-                    type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-container-high"
-                  >
-                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
-                      edit
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-error-container/30"
-                  >
-                    <span className="material-symbols-outlined text-[16px] text-error">
-                      cancel
-                    </span>
-                  </button>
-                </div>
-              </div>
-              <div className="mt-4 flex items-end justify-between">
-                <div>
-                  <p className="font-headline text-2xl font-bold text-on-surface">
-                    {formatCurrency(sub.cost, sub.currency)}
-                  </p>
-                  <p className="text-xs text-on-surface-variant">
-                    /
-                    {sub.billingCycle === "monthly"
-                      ? "month"
-                      : sub.billingCycle === "yearly"
-                        ? "year"
-                        : "quarter"}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span
-                    className={cn(
-                      "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
-                      daysUntil <= 3
-                        ? "bg-error-container/30 text-error"
-                        : daysUntil <= 7
-                          ? "bg-tertiary-container/20 text-tertiary"
-                          : "bg-surface-container-high text-on-surface-variant"
-                    )}
-                  >
-                    {daysUntil <= 0
-                      ? "Due today"
-                      : `${daysUntil}d until renewal`}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
+        {filtered.map((sub) => (
+          <SubscriptionCard key={sub.id} subscription={sub} />
+        ))}
       </div>
     </div>
   );
