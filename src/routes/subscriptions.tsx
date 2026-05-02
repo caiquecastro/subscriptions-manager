@@ -1,10 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SubscriptionCard } from "../components/SubscriptionCard";
 import { cn } from "../lib/cn";
 import { formatCurrency } from "../lib/currency";
 import { compareDateStrings, isRenewalWithinDays } from "../lib/date";
+import { type Subscription, updateSubscription } from "../lib/firebase";
 import { subscriptionsQueryOptions } from "../lib/query";
 import { getMonthlySubscriptionCost } from "../lib/subscriptions";
 
@@ -26,9 +27,39 @@ const categories = [
 ];
 
 function Subscriptions() {
+  const queryClient = useQueryClient();
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"renewal" | "price" | "name">("renewal");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState("");
   const { data: subscriptions = [] } = useQuery(subscriptionsQueryOptions);
+
+  const handleCancelSubscription = async (subscription: Subscription) => {
+    if (subscription.status === "cancelled" || cancellingId) return;
+
+    const confirmed = window.confirm(
+      `Cancel ${subscription.name}? This will mark the subscription as cancelled.`
+    );
+
+    if (!confirmed) return;
+
+    setCancelError("");
+    setCancellingId(subscription.id);
+    try {
+      await updateSubscription(subscription.id, { status: "cancelled" });
+      await queryClient.invalidateQueries({
+        queryKey: subscriptionsQueryOptions.queryKey,
+      });
+    } catch (err) {
+      setCancelError(
+        err instanceof Error
+          ? err.message
+          : "Failed to cancel subscription. Try again."
+      );
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   const filtered = subscriptions
     .filter((s) => activeCategory === "All" || s.category === activeCategory)
@@ -121,6 +152,15 @@ function Subscriptions() {
         </div>
       )}
 
+      {cancelError && (
+        <div className="flex items-start gap-3 rounded-xl bg-error-container/30 p-4">
+          <span className="material-symbols-outlined text-[20px] text-error">
+            error
+          </span>
+          <p className="text-sm text-on-error-container">{cancelError}</p>
+        </div>
+      )}
+
       {highestCost && highestPercent > 30 && (
         <div className="flex items-start gap-3 rounded-xl bg-tertiary-container/10 p-4">
           <span className="material-symbols-outlined text-[20px] text-tertiary">
@@ -180,7 +220,12 @@ function Subscriptions() {
       {/* Subscription Grid */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {filtered.map((sub) => (
-          <SubscriptionCard key={sub.id} subscription={sub} />
+          <SubscriptionCard
+            key={sub.id}
+            subscription={sub}
+            isCancelling={cancellingId === sub.id}
+            onCancel={handleCancelSubscription}
+          />
         ))}
       </div>
     </div>
