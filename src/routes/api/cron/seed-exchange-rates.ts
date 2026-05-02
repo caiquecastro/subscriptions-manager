@@ -1,13 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  applicationDefault,
-  cert,
-  getApps,
-  initializeApp,
-} from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
 
-function getAdminApp() {
+async function getAdminApp() {
+  const { applicationDefault, cert, getApps, initializeApp } = await import(
+    "firebase-admin/app"
+  );
   const existing = getApps()[0];
   if (existing) return existing;
   const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -42,7 +38,10 @@ export const Route = createFileRoute("/api/cron/seed-exchange-rates")({
         }
 
         try {
-          const app = getAdminApp();
+          const [{ getFirestore }, app] = await Promise.all([
+            import("firebase-admin/firestore"),
+            getAdminApp(),
+          ]);
           const db = getFirestore(app);
           const rates = await fetchRates();
           await db.doc("exchangeRates/latest").set({
