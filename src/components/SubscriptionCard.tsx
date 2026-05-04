@@ -6,17 +6,18 @@ import type { Subscription } from "../lib/firebase";
 
 export function SubscriptionCard({
   subscription,
+  isCancelling = false,
+  onCancel,
 }: {
   subscription: Subscription;
+  isCancelling?: boolean;
+  onCancel: (subscription: Subscription) => void;
 }) {
   const daysUntil = getDaysUntilRenewal(subscription);
+  const isCancelled = subscription.status === "cancelled";
 
   return (
-    <Link
-      to="/subscriptions/$id"
-      params={{ id: subscription.id }}
-      className="group block rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]"
-    >
+    <article className="group rounded-xl bg-surface-container-lowest p-5 ambient-shadow transition-transform hover:scale-[1.01]">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary/8">
@@ -34,20 +35,30 @@ export function SubscriptionCard({
           </div>
         </div>
         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            type="button"
+          <Link
+            to="/subscriptions/$id"
+            params={{ id: subscription.id }}
+            search={{ edit: true }}
             className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-surface-container-high"
+            title="Edit subscription"
           >
             <span className="material-symbols-outlined text-[16px] text-on-surface-variant">
               edit
             </span>
-          </button>
+          </Link>
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-error-container/30"
+            onClick={() => onCancel(subscription)}
+            disabled={isCancelled || isCancelling}
+            className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-error-container/30 disabled:cursor-not-allowed disabled:opacity-50"
+            title={
+              isCancelled
+                ? "Subscription already cancelled"
+                : "Cancel subscription"
+            }
           >
             <span className="material-symbols-outlined text-[16px] text-error">
-              cancel
+              {isCancelling ? "progress_activity" : "cancel"}
             </span>
           </button>
         </div>
@@ -81,6 +92,6 @@ export function SubscriptionCard({
           </span>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }

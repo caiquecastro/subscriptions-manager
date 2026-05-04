@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   SubscriptionForm,
   type SubscriptionFormValues,
@@ -29,10 +29,14 @@ import { uploadInvoiceFile } from "../lib/storage";
 
 export const Route = createFileRoute("/subscriptions_/$id")({
   component: SubscriptionDetail,
+  validateSearch: (search: Record<string, unknown>): { edit?: boolean } => ({
+    edit: search.edit === true || search.edit === "true" ? true : undefined,
+  }),
 });
 
 function SubscriptionDetail() {
   const { id } = Route.useParams();
+  const { edit } = Route.useSearch();
   const { data: subscriptions = [] } = useQuery(subscriptionsQueryOptions);
   const subscription = subscriptions.find((s) => s.id === id);
 
@@ -67,7 +71,10 @@ function SubscriptionDetail() {
       </Link>
 
       {/* Subscription Info */}
-      <SubscriptionHeader subscription={subscription} />
+      <SubscriptionHeader
+        initialEditing={edit === true}
+        subscription={subscription}
+      />
 
       {/* Invoices */}
       <InvoiceSection subscription={subscription} />
@@ -75,11 +82,21 @@ function SubscriptionDetail() {
   );
 }
 
-function SubscriptionHeader({ subscription }: { subscription: Subscription }) {
+function SubscriptionHeader({
+  initialEditing,
+  subscription,
+}: {
+  initialEditing?: boolean;
+  subscription: Subscription;
+}) {
   const queryClient = useQueryClient();
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(initialEditing ?? false);
   const [error, setError] = useState("");
   const daysUntil = getDaysUntilRenewal(subscription);
+
+  useEffect(() => {
+    if (initialEditing) setEditing(true);
+  }, [initialEditing]);
 
   const handleSave = async (values: SubscriptionFormValues) => {
     setError("");
