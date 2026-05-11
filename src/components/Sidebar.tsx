@@ -17,7 +17,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[240px] flex-col bg-surface-container-lowest lg:flex">
+      <aside className="fixed left-0 top-0 z-40 hidden h-screen w-60 flex-col bg-surface-container-lowest lg:flex">
         <div className="flex items-center gap-3 px-6 py-6">
           <div className="signature-gradient flex h-9 w-9 items-center justify-center rounded-lg">
             <span className="material-symbols-outlined text-[20px] text-on-primary">
